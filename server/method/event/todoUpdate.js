@@ -11,22 +11,12 @@ module.exports = (payload, next) => {
         messages: []
     };
 
-    payload.value = payload.value.trim();
-
     if (!payload.id) {
 
         return next({
             code: 'update_missing_parameter_id',
             message: 'Id parameter is required'
         }, '/todo/list', values);
-    }
-
-    if (!payload.value) {
-
-        return next({
-            code: 'update_missing_parameter_value',
-            message: 'Value parameter is required'
-        }, '/todo', values);
     }
 
     return model.get(payload.id, (err, todo) => {
@@ -47,17 +37,29 @@ module.exports = (payload, next) => {
             }, '/todo/', values);
         }
 
-        if (payload.id && !payload.done && !payload.value) {
-            payload.done = !todo.done;
-            payload.value = todo.value;
-        }
-
         if (payload.done === 'on') {
             payload.done = true;
         }
 
         if (payload.done === 'off' || !payload.done) {
             payload.done = false;
+        }
+
+        if (payload.value) {
+            payload.value = payload.value.trim();
+        }
+
+        if (payload.id) {
+            if (payload.done && !payload.value) {
+                return next({
+                    code: 'update_missing_parameter_value',
+                    message: 'Value parameter is required'
+                }, '/todo/' + payload.id, values);
+            }
+            if (!payload.done && !payload.value) {
+                payload.done = !todo.done;
+                payload.value = todo.value;
+            }
         }
 
         return model.set(payload, (err) => {
