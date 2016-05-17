@@ -1,5 +1,5 @@
 # Hapi To Do  
-[Hapi] (http://hapijs.com/) CRUD Boilerplate in a To Do [Demo] (https://hapitodo.heroku.com) that works with and without client javascript. **WIP**
+[Hapi] (http://hapijs.com/) CRUD Boilerplate in a To Do [Demo] (https://hapitodo.herokuapp.com/) that works with and without client javascript. **WIP**
 
 [![Build Status](https://travis-ci.org/genediazjr/hapitodo.svg)](https://travis-ci.org/genediazjr/hapitodo)
 [![Coverage Status](https://coveralls.io/repos/genediazjr/hapitodo/badge.svg)](https://coveralls.io/r/genediazjr/hapitodo)
