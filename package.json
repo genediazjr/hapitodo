@@ -1,0 +1,62 @@
+{
+  "name": "hapitodo",
+  "version": "0.1.0",
+  "author": "Gene Diaz <genediazjr@gmail.com> (http://genediazjr.com/)",
+  "description": "Hapi CRUD Boilerplate in a To Do Demo",
+  "private": true,
+  "license": "MIT",
+  "repository": "git://github.com/genediazjr/hapitodo",
+  "bugs": "https://github.com/genediazjr/hapitodo/issues",
+  "main": "index.js",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "jscs ./ && jshint ./ && lab -v -L -a code",
+    "test-cover": "lab -c -v -L -a code -t 100 -r html -o ./coverage.html -L && open ./coverage.html"
+  },
+  "dependencies": {
+    "slug": "0.9.x",
+    "iron": "4.0.x",
+    "async": "1.5.x",
+    "lodash": "4.12.x",
+    "bcrypt": "0.8.x",
+    "hashids": "1.0.x",
+    "mongodb": "2.1.x",
+    "ioredis": "1.15.x",
+    "msgpack5": "3.3.x",
+    "node-uuid": "1.4.x",
+    "handlebars": "4.0.x",
+    "proxyquire": "1.7.x",
+    "cast-array": "1.0.x",
+    "json-stringify-safe": "5.0.x",
+    "catbox-mongodb": "2.0.x",
+    "catbox-redis": "1.0.x",
+    "good-squeeze": "3.0.x",
+    "good-console": "6.1.x",
+    "good": "7.0.x",
+    "hapi": "13.4.x",
+    "vision": "4.1.x",
+    "visionary": "5.0.x",
+    "confidence": "3.0.x",
+    "acquaint": "0.2.x",
+    "scooter": "2.0.x",
+    "blankie": "1.2.x",
+    "crumb": "6.0.x",
+    "wreck": "7.2.x",
+    "inert": "3.2.x",
+    "hoek": "4.0.x",
+    "shot": "3.0.x",
+    "glue": "3.2.x",
+    "boom": "3.1.x",
+    "joi": "8.1.x"
+  },
+  "devDependencies": {
+    "coveralls": "2.11.x",
+    "jshint": "2.9.x",
+    "jscs": "3.0.x",
+    "code": "2.3.x",
+    "lab": "10.5.x"
+  }
+}

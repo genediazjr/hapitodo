@@ -1,0 +1,5 @@
+*.md
+*.log
+*.json
+**/*.min.js
+node_modules/*
