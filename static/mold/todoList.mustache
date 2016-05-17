@@ -13,9 +13,14 @@
     </div>
 {{/ messages }}
 
-<form class="form-inline" method="post">
-    <input type="text" class="form-control" name="value" id="new-todo" placeholder="What to do...">
-    <button class="btn btn-default" type="submit">Save</button>
+<form method="post">
+    <div class="input-group">
+        <input type="text" class="form-control" name="value" placeholder="What to do...">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Save</button>
+      </span>
+    </div>
+
     <input type="hidden" name="crumb" value="{{ crumb }}">
     <input type="hidden" name="methodFallback" value="create">
 </form>

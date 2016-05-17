@@ -4,10 +4,6 @@ body {
     padding-bottom : 20px;
 }
 
-#new-todo {
-    width : 420px;
-}
-
 .alert-fail {
     color            : #a94442;
     background-color : #f2dede;
