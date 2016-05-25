@@ -14,7 +14,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "jscs ./ && jshint ./ && lab -v -L -a code",
-    "test-cover": "lab -c -v -L -a code -t 100 -r html -o ./coverage.html -L && open ./coverage.html"
+    "test-cover": "lab -c --coverage-exclude static -v -L -a code -t 80 -r html -o ./coverage.html -L && open ./coverage.html"
   },
   "dependencies": {
     "slug": "0.9.x",
