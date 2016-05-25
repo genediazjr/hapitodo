@@ -6,7 +6,7 @@ const Context = require('acquaint');
 module.exports = (payload, next) => {
 
     payload = payload || {};
-    const model = Context.methods.model.todoObject;
+    const model = Context.methods.model.todoModel;
     const values = {
         title: 'New To Do',
         messages: []

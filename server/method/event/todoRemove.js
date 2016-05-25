@@ -5,7 +5,7 @@ const Context = require('acquaint');
 module.exports = (params, next) => {
 
     params = params || {};
-    const model = Context.methods.model.todoObject;
+    const model = Context.methods.model.todoModel;
     const values = {
         title: 'Delete To Do',
         messages: []

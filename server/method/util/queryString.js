@@ -9,12 +9,14 @@ const options = Config.get('/iron/options');
 exports.build = (params, next) => {
 
     if (!params) {
+
         return next();
     }
 
     return Iron.seal(params, secret, options, (err, sealed) => {
 
         if (err) {
+
             return next({
                 code: 'querystring_build_error',
                 message: 'Unable to build query string'
@@ -28,13 +30,15 @@ exports.build = (params, next) => {
 
 exports.parse = (query, next) => {
 
-    if (!query[qsKey]) {
+    if (!query || !query[qsKey]) {
+
         return next();
     }
 
     return Iron.unseal(query[qsKey], secret, options, (err, unsealed) => {
 
         if (err) {
+
             return next({
                 code: 'querystring_parse_error',
                 message: 'Unparsable query string'

@@ -6,7 +6,7 @@ module.exports = (params, next) => {
 
     params = params || {};
     params.query = params.query || {};
-    const model = Context.methods.model.todoObject;
+    const model = Context.methods.model.todoModel;
     const values = {
         title: 'To Do List',
         messages: params.query.messages || []
