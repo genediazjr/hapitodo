@@ -1,11 +1,10 @@
 'use strict';
 
-module.exports = [
-    {
-        path: '/todo/{id?}',
-        method: 'get',
-        handler: (request, reply) => {
+module.exports = () => {
 
+    return (request, reply) => {
+
+        if (request.method === 'get') {
             const event = request.server.methods.event;
             const query = request.server.methods.util.queryString;
             let type = 'todoObtain';
@@ -41,12 +40,8 @@ module.exports = [
                 });
             });
         }
-    },
-    {
-        path: '/todo/{id?}',
-        method: 'post',
-        handler: (request, reply) => {
 
+        if (request.method === 'post') {
             const event = request.server.methods.event;
             const query = request.server.methods.util.queryString;
             let type = (request.payload.methodFallback || '').toLowerCase();
@@ -89,5 +84,5 @@ module.exports = [
 
             return reply.file('error.html').code(405);
         }
-    }
-];
+    };
+};

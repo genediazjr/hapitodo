@@ -15,17 +15,19 @@ module.exports = [
     {
         path: '/{path*}',
         method: '*',
-        handler: (request, reply) => {
-
-            return reply.file('404.html').code(404);
+        handler: {
+            rootHandler: {
+                type: 'notfound'
+            }
         }
     },
     {
         path: '/',
         method: 'get',
-        handler: (request, reply) => {
-
-            return reply.view('index', { title: 'Hapi To Do Demo' });
+        handler: {
+            rootHandler: {
+                type: 'index'
+            }
         }
     }
 ];

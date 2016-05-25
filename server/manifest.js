@@ -11,7 +11,9 @@ const manifest = {
     server: {
         app: {},
         connections: {
-            routes: { files: { relativeTo: process.cwd() + '/static' } },
+            routes: {
+                files: { relativeTo: process.cwd() + '/static' }
+            },
             router: {
                 isCaseSensitive: false,
                 stripTrailingSlash: true
@@ -63,19 +65,28 @@ const manifest = {
             plugin: {
                 register: 'acquaint',
                 options: {
-                    routes: 'server/route/**/*.js',
+                    routes: [
+                        {
+                            includes: ['server/route/**/*.js']
+                        }
+                    ],
+                    handlers: [
+                        {
+                            includes: ['server/handler/**/*.js']
+                        }
+                    ],
                     methods: [
                         {
                             prefix: 'event',
-                            includes: 'server/method/event/**/*.js'
+                            includes: ['server/method/event/**/*.js']
                         },
                         {
                             prefix: 'model',
-                            includes: 'server/method/model/**/*.js'
+                            includes: ['server/method/model/**/*.js']
                         },
                         {
                             prefix: 'util',
-                            includes: 'server/method/util/**/*.js'
+                            includes: ['server/method/util/**/*.js']
                         }
                     ]
                 }
@@ -98,9 +109,7 @@ const manifest = {
                                     response: '*'
                                 }]
                             },
-                            {
-                                module: 'good-console'
-                            },
+                            { module: 'good-console' },
                             'stdout'
                         ]
                     }

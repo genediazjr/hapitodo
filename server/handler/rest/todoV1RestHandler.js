@@ -1,16 +1,10 @@
 'use strict';
 
-const Path = require('path');
-const apiPrefix = require('../../config').get('/apiPrefix');
-const apiVersion = 'v1';
+module.exports = () => {
 
-module.exports = [
-    {
-        path: Path.join('/', apiPrefix, apiVersion, 'todo/{id?}'),
-        config: { plugins: { crumb: { restful: true } } },
-        method: ['get', 'delete'],
-        handler: (request, reply) => {
+    return (request, reply) => {
 
+        if (['get', 'delete'].indexOf(request.method) > -1) {
             const event = request.server.methods.event;
             let type = 'todoBrowse';
 
@@ -39,13 +33,8 @@ module.exports = [
                 return reply(values);
             });
         }
-    },
-    {
-        path: Path.join('/', apiPrefix, apiVersion, 'todo'),
-        config: { plugins: { crumb: { restful: true } } },
-        method: ['post', 'put'],
-        handler: (request, reply) => {
 
+        if (['post', 'put'].indexOf(request.method) > -1) {
             const event = request.server.methods.event;
             let type = 'todoCreate';
 
@@ -70,5 +59,5 @@ module.exports = [
                 return reply(values);
             });
         }
-    }
-];
+    };
+};
