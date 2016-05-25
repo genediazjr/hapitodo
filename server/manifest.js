@@ -7,6 +7,7 @@ const defaultCriteria = {
 };
 
 const manifest = {
+    $meta: 'This file defines the plot device.',
     server: {
         app: {},
         connections: {
@@ -120,5 +121,5 @@ exports.get = (key, criteria) => {
 
 exports.meta = (key, criteria) => {
 
-    return store.get(key, criteria || defaultCriteria);
+    return store.meta(key, criteria || defaultCriteria);
 };
