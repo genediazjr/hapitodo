@@ -57,7 +57,7 @@ $ npm test
 * [visionary] (https://github.com/hapijs/visionary) - views autoload 
 * [confidence] (https://github.com/hapijs/confidence) - config util
 * [scooter] (https://github.com/hapijs/scooter) - user agent tool
-* [blankie] (https://github.com/hapijs/blankie) - csp tool
+* [blankie] (https://github.com/nlf/blankie) - csp tool
 * [crumb] (https://github.com/hapijs/crumb) - csrf tool
 * [inert] (https://github.com/hapijs/inert) - static handler
 * [wreck] (https://github.com/hapijs/wreck) - http util
@@ -72,7 +72,7 @@ $ npm test
 ## Contributing
 * Include 100% test coverage
 * Follow the [Hapi coding conventions] (http://hapijs.com/styleguide)
-* Submit an issue first for significat changes.
+* Submit an issue first for significant changes.
 
 ## Credits
 * [hapi-frame] (https://github.com/jedireza/frame) - hapi api
