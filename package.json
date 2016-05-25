@@ -20,7 +20,7 @@
     "slug": "0.9.x",
     "iron": "4.0.x",
     "async": "1.5.x",
-    "lodash": "4.12.x",
+    "lodash": "4.13.x",
     "bcrypt": "0.8.x",
     "hashids": "1.0.x",
     "mongodb": "2.1.x",
@@ -31,25 +31,25 @@
     "proxyquire": "1.7.x",
     "cast-array": "1.0.x",
     "json-stringify-safe": "5.0.x",
-    "catbox-mongodb": "2.0.x",
+    "catbox-mongodb": "3.0.x",
     "catbox-redis": "1.0.x",
     "good-squeeze": "3.0.x",
     "good-console": "6.1.x",
     "good": "7.0.x",
     "hapi": "13.4.x",
     "vision": "4.1.x",
-    "visionary": "5.0.x",
+    "visionary": "6.0.x",
     "confidence": "3.0.x",
-    "scooter": "2.0.x",
     "acquaint": "1.0.x",
+    "scooter": "3.0.x",
     "blankie": "1.2.x",
     "crumb": "6.0.x",
     "wreck": "7.2.x",
-    "inert": "3.2.x",
+    "inert": "4.0.x",
     "hoek": "4.0.x",
     "shot": "3.0.x",
     "glue": "3.2.x",
-    "boom": "3.1.x",
+    "boom": "3.2.x",
     "joi": "8.1.x"
   },
   "devDependencies": {
@@ -57,6 +57,6 @@
     "jshint": "2.9.x",
     "jscs": "3.0.x",
     "code": "2.3.x",
-    "lab": "10.5.x"
+    "lab": "10.7.x"
   }
 }
