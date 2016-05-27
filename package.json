@@ -56,7 +56,7 @@
     "coveralls": "2.11.x",
     "jshint": "2.9.x",
     "jscs": "3.0.x",
-    "code": "2.3.x",
+    "code": "3.0.x",
     "lab": "10.7.x"
   }
 }

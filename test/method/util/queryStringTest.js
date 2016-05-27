@@ -50,7 +50,7 @@ describe('server/method/util/queryString', () => {
             Iron.unseal(queryString.replace('/?' + qsKey + '=', ''), secret, options, (err, unsealed) => {
 
                 expect(err).to.not.exist();
-                expect(unsealed).to.deep.equal(testObj);
+                expect(unsealed).to.equal(testObj);
 
                 return done();
             });
@@ -71,7 +71,7 @@ describe('server/method/util/queryString', () => {
             QueryString.parse(queryObj, (err, queryParams) => {
 
                 expect(err).to.not.exist();
-                expect(queryParams).to.deep.equal(testObj);
+                expect(queryParams).to.equal(testObj);
 
                 return done();
             });
