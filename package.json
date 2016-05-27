@@ -13,8 +13,8 @@
   },
   "scripts": {
     "start": "node index.js",
-    "test": "jscs ./ && jshint ./ && lab -v -L -a code",
-    "test-cover": "lab -c --coverage-exclude static -v -L -a code -t 80 -r html -o ./coverage.html -L && open ./coverage.html"
+    "test": "lab -v -L -a code -c",
+    "test-cover": "lab --coverage-exclude static -v -L -a code -c -r html -o ./coverage.html -L && open ./coverage.html"
   },
   "dependencies": {
     "slug": "0.9.x",
@@ -54,8 +54,6 @@
   },
   "devDependencies": {
     "coveralls": "2.11.x",
-    "jshint": "2.9.x",
-    "jscs": "3.0.x",
     "code": "3.0.x",
     "lab": "10.7.x"
   }
