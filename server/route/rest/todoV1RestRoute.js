@@ -5,7 +5,7 @@ const apiVersion = 'v1';
 
 module.exports = [
     {
-        path: '/' + apiPrefix + '/' + apiVersion + '/' + 'todo/{id?}',
+        path: '/' + apiPrefix + '/' + apiVersion + '/todo/{id?}',
         method: ['get', 'delete'],
         handler: {
             todoV1RestHandler: {}
@@ -19,7 +19,7 @@ module.exports = [
         }
     },
     {
-        path: '/' + apiPrefix + '/' + apiVersion + '/' + 'todo',
+        path: '/' + apiPrefix + '/' + apiVersion + '/todo',
         method: ['post', 'put'],
         handler: {
             todoV1RestHandler: {}

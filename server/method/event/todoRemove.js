@@ -2,9 +2,9 @@
 
 const Context = require('acquaint');
 
-module.exports = (params, next) => {
+module.exports = (rawParams, next) => {
 
-    params = params || {};
+    const params = rawParams || {};
     const model = Context.methods.model.todoModel;
     const values = {
         title: 'Delete To Do',

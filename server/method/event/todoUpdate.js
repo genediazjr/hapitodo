@@ -2,9 +2,9 @@
 
 const Context = require('acquaint');
 
-module.exports = (payload, next) => {
+module.exports = (rawPayload, next) => {
 
-    payload = payload || {};
+    const payload = rawPayload || {};
     const model = Context.methods.model.todoModel;
     const values = {
         title: 'Edit To Do',

@@ -24,19 +24,19 @@ module.exports = () => {
 
                 return event[type](request.params, (err, template, values) => {
 
-                    values = values || {};
-                    values.messages = values.messages || [];
+                    const newValues = values || {};
+                    newValues.messages = newValues.messages || [];
 
                     if (err) {
                         request.server.log(['error'], err);
-                        values.messages.push({
+                        newValues.messages.push({
                             type: 'fail',
                             code: err.code,
                             message: err.message
                         });
                     }
 
-                    return reply.view(template, values);
+                    return reply.view(template, newValues);
                 });
             });
         }
@@ -52,32 +52,25 @@ module.exports = () => {
 
                 return event[type](request.payload, (err, redirect, values) => {
 
-                    values = values || {};
-                    values.messages = values.messages || [];
+                    const newValues = values || {};
+                    newValues.messages = newValues.messages || [];
 
                     if (err) {
                         request.server.log(['error'], err);
-                        values.messages.push({
+                        newValues.messages.push({
                             type: 'fail',
                             code: err.code,
                             message: err.message
                         });
                     }
 
-                    return query.build(values, (err, queries) => {
-
-                        queries = queries || '';
+                    return query.build(newValues, (err, queries) => {
 
                         if (err) {
                             request.server.log(['error'], err);
-                            values.messages.push({
-                                type: 'fail',
-                                code: err.code,
-                                message: err.message
-                            });
                         }
 
-                        return reply.redirect(redirect + queries);
+                        return reply.redirect(redirect + queries || '');
                     });
                 });
             }

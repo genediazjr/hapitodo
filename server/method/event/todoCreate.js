@@ -3,9 +3,9 @@
 const UUID = require('node-uuid');
 const Context = require('acquaint');
 
-module.exports = (payload, next) => {
+module.exports = (rawPayload, next) => {
 
-    payload = payload || {};
+    const payload = rawPayload || {};
     const model = Context.methods.model.todoModel;
     const values = {
         title: 'New To Do',
