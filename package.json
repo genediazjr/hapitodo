@@ -24,7 +24,7 @@
     "bcrypt": "0.8.x",
     "hashids": "1.0.x",
     "mongodb": "2.1.x",
-    "ioredis": "1.15.x",
+    "ioredis": "2.0.x",
     "msgpack5": "3.3.x",
     "node-uuid": "1.4.x",
     "handlebars": "4.0.x",
@@ -50,7 +50,7 @@
     "shot": "3.0.x",
     "glue": "3.2.x",
     "boom": "3.2.x",
-    "joi": "8.1.x"
+    "joi": "8.4.x"
   },
   "devDependencies": {
     "coveralls": "2.11.x",
