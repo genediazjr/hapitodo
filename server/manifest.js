@@ -63,6 +63,28 @@ const manifest = {
         },
         {
             plugin: {
+                register: 'errorh',
+                options: {
+                    errorFiles: {
+                        404: '404.html',
+                        default: 'error.html'
+                    },
+                    staticRoute: {
+                        path: '/{path*}',
+                        method: '*',
+                        handler: {
+                            directory: {
+                                path: './',
+                                index: true,
+                                redirectToSlash: true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            plugin: {
                 register: 'acquaint',
                 options: {
                     routes: [
