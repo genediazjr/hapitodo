@@ -78,6 +78,11 @@ const manifest = {
                                 index: true,
                                 redirectToSlash: true
                             }
+                        },
+                        config: {
+                            plugins: {
+                                blankie: false
+                            }
                         }
                     }
                 }
