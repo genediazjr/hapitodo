@@ -19,23 +19,7 @@ module.exports = function () {
         Vision,
         {
             register: Errorh,
-            options: {
-                errorFiles: {
-                    404: '404.html',
-                    default: '50x.html'
-                },
-                staticRoute: {
-                    path: '/{path*}',
-                    method: '*',
-                    handler: {
-                        directory: {
-                            path: './',
-                            index: true,
-                            redirectToSlash: true
-                        }
-                    }
-                }
-            }
+            options: Manifest.errorhOptions
         }
     ], (err) => {
 
