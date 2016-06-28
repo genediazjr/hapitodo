@@ -4,17 +4,23 @@ const Confidence = require('confidence');
 
 const defaultCriteria = {};
 
-const staticRoute = exports.staticRoute = {
-    path: '/{path*}',
-    method: '*',
-    handler: {
-        directory: {
-            path: './',
-            index: true,
-            redirectToSlash: true
-        }
+const errorhOptions = exports.errorhOptions = {
+    errorFiles: {
+        404: '404.html',
+        default: '50x.html'
     },
-    config: { plugins: { blankie: false } }
+    staticRoute: {
+        path: '/{path*}',
+        method: '*',
+        handler: {
+            directory: {
+                path: './',
+                index: true,
+                redirectToSlash: true
+            }
+        },
+        config: { plugins: { blankie: false } }
+    }
 };
 
 const manifest = {
@@ -52,13 +58,7 @@ const manifest = {
         {
             plugin: {
                 register: 'errorh',
-                options: {
-                    errorFiles: {
-                        404: '404.html',
-                        default: '50x.html'
-                    },
-                    staticRoute: staticRoute
-                }
+                options: errorhOptions
             }
         },
         {
