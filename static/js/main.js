@@ -12,7 +12,13 @@ const success = (res) => {
 
 const fail = (res) => {
 
-    bootbox.alert(res.responseJSON.message);
+    let message = 'An unexpected error occured.';
+
+    if (res && res.responseJSON && res.responseJSON.message) {
+        message = res.responseJSON.message;
+    }
+
+    bootbox.alert(message);
 };
 
 jQuery.fn.serializeObject = function () {
