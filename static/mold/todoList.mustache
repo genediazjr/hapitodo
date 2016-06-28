@@ -2,45 +2,29 @@
 
 <div class="header clearfix">
     <a class="btn btn-success pull-right" href="/todo" role="button">New To Do</a>
-
     <h4 class="text-muted">Hapi To Do Demo</h4>
 </div>
 
-{{# messages }}
-    <div class="alert alert-{{ type }} alert-dismissible fade in" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-        {{ message }}
-    </div>
-{{/ messages }}
-
-<form method="post">
+<form id="todoItem">
     <div class="input-group">
-        <input type="text" class="form-control" name="value" placeholder="What to do...">
+        <input type="text" class="form-control" name="content" placeholder="What to do...">
       <span class="input-group-btn">
         <button class="btn btn-default" type="submit">Save</button>
       </span>
     </div>
 
     <input type="hidden" name="crumb" value="{{ crumb }}">
-    <input type="hidden" name="methodFallback" value="create">
 </form>
-
-<br>
 
 <table class="table table-responsive">
     <tbody>
     {{# list }}
         <tr>
-            <td class="todo-value">
-                {{ value }}
-            </td>
+            <td class="todo-value">{{ content }}</td>
             <td>
-                <form method="post">
-                    <button class="btn btn-link" type="submit"><span class="glyphicon glyphicon-ok done-{{ done }}"></span></button>
-                    <input type="hidden" name="id" value="{{ id }}">
-                    <input type="hidden" name="crumb" value="{{ crumb }}">
-                    <input type="hidden" name="methodFallback" value="update">
-                </form>
+                <button data-id="{{ id }}" data-done="{{ done }}" class="btn btn-link toggle-todo">
+                    <span class="glyphicon glyphicon-ok done-{{ done }}"></span>
+                </button>
             </td>
             <td>
                 <a class="btn btn-link" href="/todo/{{ id }}" role="button">
@@ -48,12 +32,9 @@
                 </a>
             </td>
             <td>
-                <form method="post">
-                    <button class="btn btn-link" type="submit"><span class="glyphicon glyphicon-trash"></span></button>
-                    <input type="hidden" name="id" value="{{ id }}">
-                    <input type="hidden" name="crumb" value="{{ crumb }}">
-                    <input type="hidden" name="methodFallback" value="remove">
-                </form>
+                <button data-id="{{ id }}" class="btn btn-link delete-todo">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
             </td>
         </tr>
     {{/ list }}

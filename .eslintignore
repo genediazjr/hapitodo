@@ -1,5 +1,5 @@
 *.md
 *.log
 *.json
-static
+*.min.js
 node_modules/*

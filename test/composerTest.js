@@ -1,8 +1,9 @@
 'use strict';
 
+const Composer = require('../server/composer');
+
 const Code = require('code');
 const Lab = require('lab');
-const Composer = require('../server/composer');
 
 const expect = Code.expect;
 const lab = exports.lab = Lab.script();

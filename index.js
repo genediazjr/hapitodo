@@ -1,4 +1,3 @@
-/* jshint -W064 */
 'use strict';
 
 const Composer = require('./server/composer');

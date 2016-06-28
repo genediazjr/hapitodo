@@ -2,53 +2,41 @@
 
 const Confidence = require('confidence');
 
-const defaultCriteria = {
-    env: process.env.NODE_ENV
+const defaultCriteria = {};
+
+const staticRoute = exports.staticRoute = {
+    path: '/{path*}',
+    method: '*',
+    handler: {
+        directory: {
+            path: './',
+            index: true,
+            redirectToSlash: true
+        }
+    },
+    config: { plugins: { blankie: false } }
 };
 
 const manifest = {
-    $meta: 'This file defines the plot device.',
     server: {
-        app: {},
+        debug: false,
         connections: {
-            routes: {
-                files: { relativeTo: process.cwd() + '/static' }
-            },
+            routes: { files: { relativeTo: process.cwd() + '/static' } },
             router: {
                 isCaseSensitive: false,
                 stripTrailingSlash: true
             }
         }
     },
-    connections: [
-        {
-            port: process.env.PORT || 8888,
-            labels: ['web']
-        }
-    ],
     registrations: [
+        { plugin: 'crumb' },
         { plugin: 'inert' },
         { plugin: 'vision' },
         { plugin: 'scooter' },
         {
             plugin: {
                 register: 'blankie',
-                options: {
-                    defaultSrc: 'self'
-                }
-            }
-        },
-        {
-            plugin: {
-                register: 'crumb',
-                options: {
-                    key: 'crumb',
-                    size: 43,
-                    restful: false,
-                    autoGenerate: true,
-                    addToViewContext: true,
-                    cookieOptions: { clearInvalid: true }
-                }
+                options: { fontSrc: 'self' }
             }
         },
         {
@@ -67,24 +55,9 @@ const manifest = {
                 options: {
                     errorFiles: {
                         404: '404.html',
-                        default: 'error.html'
+                        default: '50x.html'
                     },
-                    staticRoute: {
-                        path: '/{path*}',
-                        method: '*',
-                        handler: {
-                            directory: {
-                                path: './',
-                                index: true,
-                                redirectToSlash: true
-                            }
-                        },
-                        config: {
-                            plugins: {
-                                blankie: false
-                            }
-                        }
-                    }
+                    staticRoute: staticRoute
                 }
             }
         },
@@ -92,30 +65,14 @@ const manifest = {
             plugin: {
                 register: 'acquaint',
                 options: {
-                    routes: [
-                        {
-                            includes: ['server/route/**/*.js']
+                    routes: [{ includes: ['server/route/**/*.js'] }],
+                    handlers: [{ includes: ['server/handler/**/*.js'] }],
+                    methods: [{
+                        includes: ['server/method/todoModel.js'],
+                        options: {
+                            bind: { todosDB: {} } // This is for demo purpose only.
                         }
-                    ],
-                    handlers: [
-                        {
-                            includes: ['server/handler/**/*.js']
-                        }
-                    ],
-                    methods: [
-                        {
-                            prefix: 'event',
-                            includes: ['server/method/event/**/*.js']
-                        },
-                        {
-                            prefix: 'model',
-                            includes: ['server/method/model/**/*.js']
-                        },
-                        {
-                            prefix: 'util',
-                            includes: ['server/method/util/**/*.js']
-                        }
-                    ]
+                    }]
                 }
             }
         },
@@ -129,12 +86,7 @@ const manifest = {
                             {
                                 module: 'good-squeeze',
                                 name: 'Squeeze',
-                                args: [{
-                                    ops: '*',
-                                    log: '*',
-                                    error: '*',
-                                    response: '*'
-                                }]
+                                args: [{ ops: '*', log: '*', error: '*', response: '*' }]
                             },
                             { module: 'good-console' },
                             'stdout'
@@ -143,7 +95,10 @@ const manifest = {
                 }
             }
         }
-    ]
+    ],
+    // $lab:coverage:off$
+    connections: [{ port: process.env.PORT || 8888 }]
+    // $lab:coverage:on$
 };
 
 const store = new Confidence.Store(manifest);
@@ -152,10 +107,4 @@ const store = new Confidence.Store(manifest);
 exports.get = (key, criteria) => {
 
     return store.get(key, criteria || defaultCriteria);
-};
-
-
-exports.meta = (key, criteria) => {
-
-    return store.meta(key, criteria || defaultCriteria);
 };
