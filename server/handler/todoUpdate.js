@@ -1,8 +1,6 @@
 'use strict';
 
 const Boom = require('boom');
-const todoSchema = require('../schemas').todoSchema;
-const requireId = todoSchema.requiredKeys('id');
 
 
 module.exports = () => {
@@ -11,12 +9,6 @@ module.exports = () => {
 
         const todo = request.server.methods.todoModel;
         const payload = request.payload;
-        const err = requireId.validate(payload).error;
-
-        if (err) {
-
-            return reply(Boom.badRequest(err.message));
-        }
 
         return todo.set(payload, (err, isUpdated) => {
 

@@ -73,22 +73,6 @@ describe('server/handler/todoUpdate', () => {
         });
     });
 
-    it('returns 400 if payload is invalid', (done) => {
-
-        testServer.inject({
-            method: 'put',
-            url: '/',
-            payload: { test: 'value' }
-        }, (res) => {
-
-            expect(res.statusCode).to.equal(400);
-            expect(res.result.statusCode).to.equal(400);
-            expect(res.result.message).to.exist();
-
-            return done();
-        });
-    });
-
     it('returns 404 if todo id does not exist', (done) => {
 
         testServer.inject({

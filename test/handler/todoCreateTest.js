@@ -79,43 +79,6 @@ describe('server/handler/todoCreate', () => {
         });
     });
 
-    it('returns 400 if payload is invalid', (done) => {
-
-        testServer.inject({
-            method: 'get',
-            url: '/'
-        }, (res) => {
-
-            const crumb = res.headers['set-cookie'][0].split(';')[0].split('=')[1];
-
-            testServer.inject({
-                method: 'post',
-                url: '/',
-                headers: { cookie: 'crumb=' + crumb },
-                payload: { test: 'value', crumb: crumb }
-            }, (res) => {
-
-                expect(res.statusCode).to.equal(400);
-                expect(res.result.statusCode).to.equal(400);
-                expect(res.result.message).to.exist();
-
-                testServer.inject({
-                    method: 'post',
-                    url: '/',
-                    headers: { cookie: 'crumb=' + crumb },
-                    payload: { crumb: crumb }
-                }, (res) => {
-
-                    expect(res.statusCode).to.equal(400);
-                    expect(res.result.statusCode).to.equal(400);
-                    expect(res.result.message).to.exist();
-
-                    return done();
-                });
-            });
-        });
-    });
-
     it('returns 200 success if payload is valid', (done) => {
 
         testServer.inject({
