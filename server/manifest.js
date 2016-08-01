@@ -35,26 +35,9 @@ const manifest = {
         }
     },
     registrations: [
-        { plugin: 'crumb' },
         { plugin: 'inert' },
-        { plugin: 'vision' },
         { plugin: 'scooter' },
-        {
-            plugin: {
-                register: 'blankie',
-                options: { fontSrc: 'self' }
-            }
-        },
-        {
-            plugin: {
-                register: 'visionary',
-                options: {
-                    path: 'static/mold',
-                    partialsPath: 'static/mold/parts',
-                    engines: { mustache: 'handlebars' }
-                }
-            }
-        },
+        { plugin: 'blankie' },
         {
             plugin: {
                 register: 'errorh',
