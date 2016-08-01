@@ -3,7 +3,8 @@
     "ecmaVersion": 6
   },
   "globals": {
-    "bootbox": true
+    "Handlebars": true,
+    "Router": true
   },
   "env": {
     "browser": true,
