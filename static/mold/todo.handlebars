@@ -1,0 +1,10 @@
+{{#this}}
+    <li {{#if done}}class="completed" {{/if}} data-id="{{id}}">
+        <div class="view">
+            <input class="done" type="checkbox" {{#if done}}checked{{/if}}>
+            <label>{{content}}</label>
+            <button class="remove"></button>
+        </div>
+        <input class="edit" value="{{content}}">
+    </li>
+{{/this}}
