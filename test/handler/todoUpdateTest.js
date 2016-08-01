@@ -3,7 +3,6 @@
 const TodoUpdate = require('../../server/handler/todoUpdate');
 const TestServer = require('../testServer');
 
-const Crumb = require('crumb');
 const Code = require('code');
 const Lab = require('lab');
 
@@ -17,8 +16,6 @@ const testServer = new TestServer();
 
 let testTodosDB = {};
 let testError = null;
-
-testServer.register(Crumb);
 
 testServer.method('todoModel.set', (todo, next) => {
 

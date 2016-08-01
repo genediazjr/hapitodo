@@ -3,7 +3,6 @@
 const TodoBrowse = require('../../server/handler/todoBrowse');
 const TestServer = require('../testServer');
 
-const Crumb = require('crumb');
 const Code = require('code');
 const Lab = require('lab');
 
@@ -17,10 +16,11 @@ const testServer = new TestServer();
 
 let testTodosDB = [];
 let testError = null;
+let testFilter = null;
 
-testServer.register(Crumb);
+testServer.method('todoModel.row', (filter, next) => {
 
-testServer.method('todoModel.row', (next) => {
+    testFilter = filter;
 
     return next(testError, testTodosDB);
 });
@@ -28,13 +28,7 @@ testServer.method('todoModel.row', (next) => {
 testServer.handler('todoBrowse', TodoBrowse);
 
 testServer.route({
-    path: '/web',
-    method: 'get',
-    handler: { todoBrowse: { web: true } }
-});
-
-testServer.route({
-    path: '/rest',
+    path: '/{filter}',
     method: 'get',
     handler: { todoBrowse: {} },
     config: { plugins: { errorh: false } }
@@ -44,6 +38,7 @@ beforeEach((done) => {
 
     testTodosDB = [];
     testError = null;
+    testFilter = null;
 
     return done();
 });
@@ -56,53 +51,48 @@ describe('server/handler/todoBrowse', () => {
 
         testServer.inject({
             method: 'get',
-            url: '/rest'
+            url: '/all'
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
             expect(res.result.statusCode).to.equal(500);
             expect(res.result.message).to.exist();
 
-            testServer.inject({
-                method: 'get',
-                url: '/web'
-            }, (res) => {
-
-                expect(res.statusCode).to.equal(500);
-                expect(res.result).to.contain('Error');
-                expect(res.result).to.contain('<!doctype html>');
-
-                return done();
-            });
+            return done();
         });
     });
 
-    it('returns 200 html page and json with todo list if web', (done) => {
+    it('returns 200 json of todo list', (done) => {
 
         testTodosDB = [{ id: 'someId', done: false, content: 'sometask' }];
 
         testServer.inject({
             method: 'get',
-            url: '/rest'
+            url: '/somefilter'
         }, (res) => {
 
             expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal({
-                title: 'To Do List',
-                list: [{ id: 'someId', done: false, content: 'sometask' }]
-            });
+            expect(testFilter).to.equal('somefilter');
+            expect(res.result).to.equal([{ id: 'someId', done: false, content: 'sometask' }]);
 
-            testServer.inject({
-                method: 'get',
-                url: '/web'
-            }, (res) => {
+            return done();
+        });
+    });
 
-                expect(res.statusCode).to.equal(200);
-                expect(res.result).to.contain('sometask');
-                expect(res.result).to.contain('<!doctype html>');
+    it('returns 200 json of empty list even if db is null', (done) => {
 
-                return done();
-            });
+        testTodosDB = null;
+
+        testServer.inject({
+            method: 'get',
+            url: '/otherfilter'
+        }, (res) => {
+
+            expect(res.statusCode).to.equal(200);
+            expect(testFilter).to.equal('otherfilter');
+            expect(res.result).to.equal({});
+
+            return done();
         });
     });
 });

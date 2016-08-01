@@ -3,7 +3,6 @@
 const TodoCreate = require('../../server/handler/todoCreate');
 const TestServer = require('../testServer');
 
-const Crumb = require('crumb');
 const Code = require('code');
 const Lab = require('lab');
 
@@ -18,22 +17,16 @@ const testServer = new TestServer();
 let testTodosDB = [];
 let testError = null;
 
-testServer.register(Crumb);
-
 testServer.method('todoModel.add', (todo, next) => {
 
-    testTodosDB.push(todo);
+    if (todo) {
+        testTodosDB.push(todo);
+    }
 
     return next(testError, testTodosDB);
 });
 
 testServer.handler('todoCreate', TodoCreate);
-
-testServer.route({
-    path: '/',
-    method: 'get',
-    handler: { todoCreate: { web: true } }
-});
 
 testServer.route({
     path: '/',
@@ -57,92 +50,32 @@ describe('server/handler/todoCreate', () => {
         testError = new Error('some error');
 
         testServer.inject({
-            method: 'get',
-            url: '/'
+            method: 'post',
+            url: '/',
+            payload: { content: 'test' }
         }, (res) => {
 
-            const crumb = res.headers['set-cookie'][0].split(';')[0].split('=')[1];
+            expect(res.statusCode).to.equal(500);
+            expect(res.result.statusCode).to.equal(500);
+            expect(res.result.message).to.exist();
 
-            testServer.inject({
-                method: 'post',
-                url: '/',
-                headers: { cookie: 'crumb=' + crumb },
-                payload: { content: 'test', crumb: crumb }
-            }, (res) => {
-
-                expect(res.statusCode).to.equal(500);
-                expect(res.result.statusCode).to.equal(500);
-                expect(res.result.message).to.exist();
-
-                return done();
-            });
+            return done();
         });
     });
 
     it('returns 200 success if payload is valid', (done) => {
 
         testServer.inject({
-            method: 'get',
-            url: '/'
-        }, (res) => {
-
-            const crumb = res.headers['set-cookie'][0].split(';')[0].split('=')[1];
-
-            testServer.inject({
-                method: 'post',
-                url: '/',
-                headers: { cookie: 'crumb=' + crumb },
-                payload: { content: 'test', crumb: crumb }
-            }, (res) => {
-
-                expect(res.statusCode).to.equal(200);
-                expect(res.result.hasOwnProperty('success')).to.equal(true);
-                expect(testTodosDB[0]).to.equal({ content: 'test' });
-
-                return done();
-            });
-        });
-    });
-
-    it('returns 200 html page if options.web is true', (done) => {
-
-        testServer.route({
-            path: '/test',
             method: 'post',
-            handler: { todoCreate: { web: true } }
-        });
-
-        testServer.inject({
-            method: 'get',
-            url: '/'
+            url: '/',
+            payload: { content: 'test' }
         }, (res) => {
 
-            const crumb = res.headers['set-cookie'][0].split(';')[0].split('=')[1];
+            expect(res.statusCode).to.equal(201);
+            expect(res.result.hasOwnProperty('success')).to.equal(true);
+            expect(testTodosDB[0]).to.equal({ content: 'test' });
 
-            testServer.inject({
-                method: 'post',
-                url: '/test',
-                headers: { cookie: 'crumb=' + crumb },
-                payload: { crumb: crumb }
-            }, (res) => {
-
-                expect(res.statusCode).to.equal(200);
-                expect(res.result).to.contain('New');
-                expect(res.result).to.contain('<!doctype html>');
-
-                testServer.inject({
-                    method: 'get',
-                    url: '/'
-                }, (res) => {
-
-                    expect(res.statusCode).to.equal(200);
-                    expect(res.result).to.contain('New');
-                    expect(res.result).to.contain('<!doctype html>');
-                    expect(res.headers['set-cookie'][0].split(';')[0].split('=')[0]).to.equal('crumb');
-
-                    return done();
-                });
-            });
+            return done();
         });
     });
 });

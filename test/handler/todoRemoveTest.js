@@ -3,7 +3,6 @@
 const TodoRemove = require('../../server/handler/todoRemove');
 const TestServer = require('../testServer');
 
-const Crumb = require('crumb');
 const Code = require('code');
 const Lab = require('lab');
 
@@ -17,8 +16,6 @@ const testServer = new TestServer();
 
 let testTodosDB = {};
 let testError = null;
-
-testServer.register(Crumb);
 
 testServer.method('todoModel.del', (id, next) => {
 
@@ -91,8 +88,8 @@ describe('server/handler/todoRemove', () => {
             url: '/someid'
         }, (res) => {
 
-            expect(res.statusCode).to.equal(200);
-            expect(res.result.hasOwnProperty('success')).to.equal(true);
+            expect(res.statusCode).to.equal(204);
+            expect(res.result).to.not.exist();
             expect(testTodosDB).to.equal({});
 
             return done();
