@@ -18,7 +18,6 @@ const testTodosDB = { todosDB: {} };
 const options = { bind: testTodosDB };
 
 testServer.method('todoModel.row', TodoModel.row, options);
-testServer.method('todoModel.get', TodoModel.get, options);
 testServer.method('todoModel.del', TodoModel.del, options);
 testServer.method('todoModel.add', TodoModel.add, options);
 testServer.method('todoModel.set', TodoModel.set, options);
@@ -36,64 +35,84 @@ describe('server/method/todoModel.row', () => {
 
     it('lists all todos in an array', (done) => {
 
-        todoModel.row((err, todoList) => {
+        todoModel.row('all', (err, todoList) => {
 
             expect(err).to.not.exist();
-            expect(todoList).to.equal([]);
+            expect(todoList).to.equal({
+                totalTodoCount: 0,
+                activeTodoCount: 0,
+                completedTodoCount: 0,
+                list: []
+            });
 
-            testTodosDB.todosDB = { someId: { done: false, content: 'testval' } };
-
-            todoModel.row((err, todoList) => {
+            todoModel.row('active', (err, todoList) => {
 
                 expect(err).to.not.exist();
-                expect(todoList).to.equal([{ done: false, content: 'testval', id: 'someId' }]);
+                expect(todoList).to.equal({
+                    totalTodoCount: 0,
+                    activeTodoCount: 0,
+                    completedTodoCount: 0,
+                    list: []
+                });
 
-                return done();
+                todoModel.row('completed', (err, todoList) => {
+
+                    expect(err).to.not.exist();
+                    expect(todoList).to.equal({
+                        totalTodoCount: 0,
+                        activeTodoCount: 0,
+                        completedTodoCount: 0,
+                        list: []
+                    });
+
+                    testTodosDB.todosDB = {
+                        someId1: { done: true, content: 'testval1' },
+                        someId2: { done: false, content: 'testval2' }
+                    };
+
+                    todoModel.row('all', (err, todoList) => {
+
+                        expect(err).to.not.exist();
+                        expect(todoList).to.equal({
+                            totalTodoCount: 2,
+                            activeTodoCount: 1,
+                            completedTodoCount: 1,
+                            list: [
+                                { id: 'someId1', done: true, content: 'testval1' },
+                                { id: 'someId2', done: false, content: 'testval2' }
+                            ]
+                        });
+
+                        todoModel.row('active', (err, todoList) => {
+
+                            expect(err).to.not.exist();
+                            expect(todoList).to.equal({
+                                totalTodoCount: 2,
+                                activeTodoCount: 1,
+                                completedTodoCount: 1,
+                                list: [
+                                    { id: 'someId2', done: false, content: 'testval2' }
+                                ]
+                            });
+
+                            todoModel.row('completed', (err, todoList) => {
+
+                                expect(err).to.not.exist();
+                                expect(todoList).to.equal({
+                                    totalTodoCount: 2,
+                                    activeTodoCount: 1,
+                                    completedTodoCount: 1,
+                                    list: [
+                                        { id: 'someId1', done: true, content: 'testval1' }
+                                    ]
+                                });
+
+                                return done();
+                            });
+                        });
+                    });
+                });
             });
-        });
-    });
-});
-
-describe('server/method/todoModel.get', () => {
-
-    it('returns an error if id is not a string', (done) => {
-
-        todoModel.get(undefined, (err, todoObj) => {
-
-            expect(err).to.exist();
-            expect(todoObj).to.not.exist();
-
-            todoModel.get(1, (err, todoObj) => {
-
-                expect(err).to.exist();
-                expect(todoObj).to.not.exist();
-
-                return done();
-            });
-        });
-    });
-
-    it('returns an object if id exists', (done) => {
-
-        testTodosDB.todosDB = { someId: { done: false, content: 'testval' } };
-
-        todoModel.get('someId', (err, todoObj) => {
-
-            expect(err).to.not.exist();
-            expect(todoObj).to.exist();
-
-            return done();
-        });
-    });
-
-    it('returns undefined if id does not exist', (done) => {
-
-        todoModel.get('someId', (err, todoObj) => {
-
-            expect(err).to.not.exist();
-            expect(todoObj).to.not.exist();
-
-            return done();
         });
     });
 });
@@ -126,6 +145,24 @@ describe('server/method/todoModel.del', () => {
             expect(err).to.not.exist();
             expect(isDeleted).to.equal(true);
             expect(testTodosDB.todosDB).to.equal({});
+
+            return done();
+        });
+    });
+
+    it('deletes all completed objects', (done) => {
+
+        testTodosDB.todosDB = {
+            someId1: { done: done, content: 'testval1' },
+            someId2: { done: false, content: 'testval2' },
+            someId3: { done: done, content: 'testval3' }
+        };
+
+        todoModel.del('completed', (err, isDeleted) => {
+
+            expect(err).to.not.exist();
+            expect(isDeleted).to.equal(true);
+            expect(testTodosDB.todosDB).to.equal({ someId2: { done: false, content: 'testval2' } });
 
             return done();
         });
@@ -238,6 +275,39 @@ describe('server/method/todoModel.set', () => {
                 expect(err).to.not.exist();
                 expect(isUpdated).to.equal(true);
                 expect(testTodosDB.todosDB).to.equal({ someId: { done: true, content: 'valtest' } });
+
+                return done();
+            });
+        });
+    });
+
+    it('updates all to active or completed', (done) => {
+
+        testTodosDB.todosDB = {
+            someId1: { done: false, content: 'testval1' },
+            someId2: { done: false, content: 'testval2' },
+            someId3: { done: true, content: 'testval3' }
+        };
+
+        todoModel.set({ id: 'all', done: true }, (err, isUpdated) => {
+
+            expect(err).to.not.exist();
+            expect(isUpdated).to.equal(true);
+            expect(testTodosDB.todosDB).to.equal({
+                someId1: { done: true, content: 'testval1' },
+                someId2: { done: true, content: 'testval2' },
+                someId3: { done: true, content: 'testval3' }
+            });
+
+            todoModel.set({ id: 'all', done: false }, (err, isUpdated) => {
+
+                expect(err).to.not.exist();
+                expect(isUpdated).to.equal(true);
+                expect(testTodosDB.todosDB).to.equal({
+                    someId1: { done: false, content: 'testval1' },
+                    someId2: { done: false, content: 'testval2' },
+                    someId3: { done: false, content: 'testval3' }
+                });
 
                 return done();
             });
