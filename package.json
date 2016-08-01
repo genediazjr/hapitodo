@@ -1,6 +1,6 @@
 {
   "name": "hapitodo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Gene Diaz <genediazjr@gmail.com> (http://genediazjr.com/)",
   "description": "Hapi + TodoMVC",
   "private": true,
