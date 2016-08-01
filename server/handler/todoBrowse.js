@@ -3,35 +3,21 @@
 const Boom = require('boom');
 
 
-module.exports = (route, options) => {
+module.exports = () => {
 
     return (request, reply) => {
 
-        const response = { title: 'To Do List' };
-        const isWeb = options.web;
         const todo = request.server.methods.todoModel;
 
-        return todo.row((err, list) => {
-
-            response.list = list;
+        return todo.row(request.params.filter, (err, todos) => {
 
             if (err) {
                 // add logging here
 
-                if (isWeb) {
-
-                    return reply.file('50x.html').code(500);
-                }
-
                 return reply(Boom.badImplementation());
             }
 
-            if (isWeb) {
-
-                return reply.view('todoList', response);
-            }
-
-            return reply(response);
+            return reply(todos || {}).code(200);
         });
     };
 };

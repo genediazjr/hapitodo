@@ -3,21 +3,13 @@
 const Boom = require('boom');
 
 
-module.exports = (route, options) => {
+module.exports = () => {
 
     return (request, reply) => {
 
-        const response = { title: 'New To Do' };
-        const isWeb = options.web;
         const todo = request.server.methods.todoModel;
-        const payload = request.payload;
 
-        if (isWeb) {
-
-            return reply.view('todoItem', response);
-        }
-
-        return todo.add(payload, (err) => {
+        return todo.add(request.payload, (err, id) => {
 
             if (err) {
                 // add logging here
@@ -25,7 +17,7 @@ module.exports = (route, options) => {
                 return reply(Boom.badImplementation());
             }
 
-            return reply({success: 'To Do saved.'}).code(200);
+            return reply({success: 'To Do saved.', id: id}).code(201);
         });
     };
 };

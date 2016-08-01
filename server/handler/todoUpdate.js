@@ -8,9 +8,8 @@ module.exports = () => {
     return (request, reply) => {
 
         const todo = request.server.methods.todoModel;
-        const payload = request.payload;
 
-        return todo.set(payload, (err, isUpdated) => {
+        return todo.set(request.payload, (err, isUpdated) => {
 
             if (err) {
                 // add logging here
@@ -23,7 +22,7 @@ module.exports = () => {
                 return reply(Boom.notFound('To Do does not exist.'));
             }
 
-            return reply({success: 'To Do updated.'}).code(200);
+            return reply({success: 'To Do Updated.'}).code(200);
         });
     };
 };
