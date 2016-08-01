@@ -17,43 +17,26 @@ const testServer = new TestServer();
 const object = '/todo';
 const restapi = '/api/v1' + object;
 
-let todoCreateIsWeb = false;
-let todoBrowseIsWeb = false;
-let todoObtainIsWeb = false;
 let todoCreate = false;
 let todoBrowse = false;
-let todoObtain = false;
 let todoRemove = false;
 let todoUpdate = false;
 
-testServer.handler('todoCreate', (route, options) => {
+testServer.handler('todoCreate', () => {
 
     return (request, reply) => {
 
         todoCreate = true;
-        todoCreateIsWeb = options.web;
 
         return reply(true);
     };
 });
 
-testServer.handler('todoBrowse', (route, options) => {
+testServer.handler('todoBrowse', () => {
 
     return (request, reply) => {
 
         todoBrowse = true;
-        todoBrowseIsWeb = options.web;
-
-        return reply(true);
-    };
-});
-
-testServer.handler('todoObtain', (route, options) => {
-
-    return (request, reply) => {
-
-        todoObtain = true;
-        todoObtainIsWeb = options.web;
 
         return reply(true);
     };
@@ -87,119 +70,54 @@ describe('server/route/todoRoute', () => {
 
         todoCreate = false;
         todoBrowse = false;
-        todoObtain = false;
         todoRemove = false;
         todoUpdate = false;
 
         return done();
     });
 
-    it('has get path ' + object, (done) => {
+    it('has get path ' + restapi + '/list/{filter}', (done) => {
 
         testServer.inject({
             method: 'get',
-            url: object
+            url: restapi + '/list/test'
         }, (res) => {
 
-            expect(todoCreate).to.equal(true);
-            expect(todoCreateIsWeb).to.equal(true);
-            expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal(true);
-
-            return done();
-        });
-    });
-
-    it('has get path ' + object + '/list', (done) => {
-
-        testServer.inject({
-            method: 'get',
-            url: object + '/list'
-        }, (res) => {
-
-            expect(todoBrowse).to.equal(true);
-            expect(todoBrowseIsWeb).to.equal(true);
-            expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal(true);
-
-            return done();
-        });
-    });
-
-    it('has get path ' + object + '/{id}', (done) => {
-
-        testServer.inject({
-            method: 'get',
-            url: object + '/someid'
-        }, (res) => {
-
-            expect(todoObtain).to.equal(true);
-            expect(todoObtainIsWeb).to.equal(true);
-            expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal(true);
-
-            return done();
-        });
-    });
-
-    it('has get path validation ' + object + '/{id}', (done) => {
-
-        testServer.inject({
-            method: 'get',
-            url: object + '/some'
-        }, (res) => {
-
-            expect(todoObtain).to.equal(false);
-            expect(todoObtainIsWeb).to.equal(true);
+            expect(todoBrowse).to.equal(false);
             expect(res.statusCode).to.equal(400);
-            expect(res.result.message).to.contain('must be at least');
+            expect(res.result.message).to.contains('must be one of');
 
-            return done();
-        });
-    });
+            testServer.inject({
+                method: 'get',
+                url: restapi + '/list/all'
+            }, (res) => {
 
-    it('has get path ' + restapi + '/list', (done) => {
+                expect(todoBrowse).to.equal(true);
+                expect(res.statusCode).to.equal(200);
+                expect(res.result).to.equal(true);
 
-        testServer.inject({
-            method: 'get',
-            url: restapi + '/list'
-        }, (res) => {
+                testServer.inject({
+                    method: 'get',
+                    url: restapi + '/list/active'
+                }, (res) => {
 
-            expect(todoBrowse).to.equal(true);
-            expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal(true);
+                    expect(todoBrowse).to.equal(true);
+                    expect(res.statusCode).to.equal(200);
+                    expect(res.result).to.equal(true);
 
-            return done();
-        });
-    });
+                    testServer.inject({
+                        method: 'get',
+                        url: restapi + '/list/completed'
+                    }, (res) => {
 
-    it('has get path ' + restapi + '/{id}', (done) => {
+                        expect(todoBrowse).to.equal(true);
+                        expect(res.statusCode).to.equal(200);
+                        expect(res.result).to.equal(true);
 
-        testServer.inject({
-            method: 'get',
-            url: restapi + '/someid'
-        }, (res) => {
-
-            expect(todoObtain).to.equal(true);
-            expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal(true);
-
-            return done();
-        });
-    });
-
-    it('has get path validation ' + restapi + '/{id}', (done) => {
-
-        testServer.inject({
-            method: 'get',
-            url: restapi + '/some'
-        }, (res) => {
-
-            expect(todoObtain).to.equal(false);
-            expect(res.statusCode).to.equal(400);
-            expect(res.result.message).to.contain('must be at least');
-
-            return done();
+                        return done();
+                    });
+                });
+            });
         });
     });
 
@@ -249,42 +167,11 @@ describe('server/route/todoRoute', () => {
         });
     });
 
-    it('has post path ' + restapi + '/{someid}', (done) => {
-
-        testServer.inject({
-            method: 'post',
-            url: restapi + '/someid',
-            payload: { content: 'test' }
-        }, (res) => {
-
-            expect(todoCreate).to.equal(true);
-            expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal(true);
-
-            return done();
-        });
-    });
-
     it('has post path validation ' + restapi, (done) => {
 
         testServer.inject({
             method: 'post',
             url: restapi
-        }, (res) => {
-
-            expect(todoCreate).to.equal(false);
-            expect(res.statusCode).to.equal(400);
-            expect(res.result.message).to.contain('must be an object');
-
-            return done();
-        });
-    });
-
-    it('has post path validation ' + restapi + '/{someid}', (done) => {
-
-        testServer.inject({
-            method: 'post',
-            url: restapi + '/someid'
         }, (res) => {
 
             expect(todoCreate).to.equal(false);
@@ -311,42 +198,11 @@ describe('server/route/todoRoute', () => {
         });
     });
 
-    it('has put path ' + restapi + '/{someid}', (done) => {
-
-        testServer.inject({
-            method: 'put',
-            url: restapi + '/someid',
-            payload: { id: 'test' }
-        }, (res) => {
-
-            expect(todoUpdate).to.equal(true);
-            expect(res.statusCode).to.equal(200);
-            expect(res.result).to.equal(true);
-
-            return done();
-        });
-    });
-
     it('has put path validation ' + restapi, (done) => {
 
         testServer.inject({
             method: 'put',
             url: restapi
-        }, (res) => {
-
-            expect(todoUpdate).to.equal(false);
-            expect(res.statusCode).to.equal(400);
-            expect(res.result.message).to.contain('must be an object');
-
-            return done();
-        });
-    });
-
-    it('has put path validation ' + restapi + '/{someid}', (done) => {
-
-        testServer.inject({
-            method: 'put',
-            url: restapi + '/someid'
         }, (res) => {
 
             expect(todoUpdate).to.equal(false);
