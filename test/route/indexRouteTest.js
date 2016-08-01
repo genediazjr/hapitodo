@@ -29,7 +29,7 @@ describe('server/route/indexRoute', () => {
 
             testServer.inject({
                 method: 'get',
-                url: '/css/main.css'
+                url: '/css/app.css'
             }, (res) => {
 
                 expect(res.statusCode).to.equal(200);
