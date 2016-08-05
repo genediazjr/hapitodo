@@ -4,6 +4,10 @@ const Joi = require('joi');
 const Confidence = require('confidence');
 const todoSchema = require('../schemas').todoSchema;
 
+/*
+This model is for Demo purposes only.
+This must be replaced with actual database api.
+ */
 
 exports.row = function (filter, next) {
 
