@@ -5,6 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/genediazjr/hapitodo/badge.svg)](https://coveralls.io/r/genediazjr/hapitodo)
 [![Code Climate](https://codeclimate.com/github/genediazjr/hapitodo/badges/gpa.svg)](https://codeclimate.com/github/genediazjr/hapitodo)
 [![Known Vulnerabilities](https://snyk.io/test/github/genediazjr/hapitodo/badge.svg)](https://snyk.io/test/github/genediazjr/hapitodo)
+[![NSP Status](https://nodesecurity.io/orgs/genediazjr/projects/7c6fd452-5999-4656-93cc-c949de1ece85/badge)](https://nodesecurity.io/orgs/genediazjr/projects/7c6fd452-5999-4656-93cc-c949de1ece85)
 
 ## Setup
 ```bash
