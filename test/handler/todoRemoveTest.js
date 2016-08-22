@@ -1,7 +1,7 @@
 'use strict';
 
 const TodoRemove = require('../../server/handler/todoRemove');
-const TestServer = require('../testServer');
+const testServer = require('../testServer')();
 
 const Code = require('code');
 const Lab = require('lab');
@@ -11,8 +11,6 @@ const lab = exports.lab = Lab.script();
 const beforeEach = lab.beforeEach;
 const describe = lab.describe;
 const it = lab.it;
-
-const testServer = new TestServer();
 
 let testTodosDB = {};
 let testError = null;

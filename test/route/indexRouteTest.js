@@ -1,7 +1,7 @@
 'use strict';
 
 const IndexRoute = require('../../server/route/indexRoute');
-const TestServer = require('../testServer');
+const testServer = require('../testServer')();
 
 const Code = require('code');
 const Lab = require('lab');
@@ -10,8 +10,6 @@ const expect = Code.expect;
 const lab = exports.lab = Lab.script();
 const describe = lab.describe;
 const it = lab.it;
-
-const testServer = new TestServer();
 
 testServer.route(IndexRoute);
 
