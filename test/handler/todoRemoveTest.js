@@ -9,11 +9,14 @@ const Lab = require('lab');
 const expect = Code.expect;
 const lab = exports.lab = Lab.script();
 const beforeEach = lab.beforeEach;
+const before = lab.before;
 const describe = lab.describe;
 const it = lab.it;
 
 let testTodosDB = {};
 let testError = null;
+
+let crumb;
 
 testServer.method('todoModel.del', (id, next) => {
 
@@ -28,11 +31,34 @@ testServer.method('todoModel.del', (id, next) => {
 
 testServer.handler('todoRemove', TodoRemove);
 
-testServer.route({
-    path: '/{id}',
-    method: 'delete',
-    handler: { todoRemove: {} },
-    config: { plugins: { errorh: false } }
+testServer.route([
+    {
+        path: '/',
+        method: 'get',
+        handler: (request, reply) => {
+
+            return reply('').code(200);
+        }
+    },
+    {
+        path: '/{id}',
+        method: 'delete',
+        handler: { todoRemove: {} },
+        config: { plugins: { errorh: false } }
+    }
+]);
+
+before((done) => {
+
+    testServer.inject({
+        method: 'get',
+        url: '/'
+    }, (res) => {
+
+        crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
+
+        return done();
+    });
 });
 
 beforeEach((done) => {
@@ -51,7 +77,8 @@ describe('server/handler/todoRemove', () => {
 
         testServer.inject({
             method: 'delete',
-            url: '/someid'
+            url: '/someid',
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -66,7 +93,8 @@ describe('server/handler/todoRemove', () => {
 
         testServer.inject({
             method: 'delete',
-            url: '/someid'
+            url: '/someid',
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(404);
@@ -83,7 +111,8 @@ describe('server/handler/todoRemove', () => {
 
         testServer.inject({
             method: 'delete',
-            url: '/someid'
+            url: '/someid',
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(204);

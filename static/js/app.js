@@ -10,6 +10,7 @@ jQuery(($) => {
     const ESCAPE_KEY = 27;
     const ENTER_KEY = 13;
     const REST_API = '/api/v1/todo';
+    let crumb;
 
     const App = {
         init: function () {
@@ -157,6 +158,21 @@ jQuery(($) => {
             $.ajax(REST_API, { data: todo, method: 'put' }).always(next);
         }
     };
+
+    $(document).ajaxSend((e, xhr) => {
+
+        xhr.setRequestHeader('x-csrf-token', crumb);
+    });
+
+    $(document).ajaxSuccess((e, xhr) => {
+
+        const csrf = xhr.getResponseHeader('x-csrf-token');
+
+        if (csrf) {
+            crumb = csrf;
+            document.cookie = 'crumb=' + csrf + '; path=/';
+        }
+    });
 
     App.init();
 });

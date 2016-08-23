@@ -14,7 +14,10 @@ module.exports = [
         handler: { todoBrowse: {} },
         config: {
             validate: { params: { filter: Joi.string().valid(['all', 'active', 'completed']) } },
-            plugins: plugins
+            plugins: {
+                errorh: false,
+                crumb: { restful: false }
+            }
         }
     },
     {

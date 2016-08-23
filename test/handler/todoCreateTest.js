@@ -9,11 +9,14 @@ const Lab = require('lab');
 const expect = Code.expect;
 const lab = exports.lab = Lab.script();
 const beforeEach = lab.beforeEach;
+const before = lab.before;
 const describe = lab.describe;
 const it = lab.it;
 
 let testTodosDB = [];
 let testError = null;
+
+let crumb;
 
 testServer.method('todoModel.add', (todo, next) => {
 
@@ -26,11 +29,34 @@ testServer.method('todoModel.add', (todo, next) => {
 
 testServer.handler('todoCreate', TodoCreate);
 
-testServer.route({
-    path: '/',
-    method: 'post',
-    handler: { todoCreate: {} },
-    config: { plugins: { errorh: false } }
+testServer.route([
+    {
+        path: '/',
+        method: 'get',
+        handler: (request, reply) => {
+
+            return reply('').code(200);
+        }
+    },
+    {
+        path: '/',
+        method: 'post',
+        handler: { todoCreate: {} },
+        config: { plugins: { errorh: false } }
+    }
+]);
+
+before((done) => {
+
+    testServer.inject({
+        method: 'get',
+        url: '/'
+    }, (res) => {
+
+        crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
+
+        return done();
+    });
 });
 
 beforeEach((done) => {
@@ -50,7 +76,8 @@ describe('server/handler/todoCreate', () => {
         testServer.inject({
             method: 'post',
             url: '/',
-            payload: { content: 'test' }
+            payload: { content: 'test' },
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -63,10 +90,12 @@ describe('server/handler/todoCreate', () => {
 
     it('returns 200 success if payload is valid', (done) => {
 
+
         testServer.inject({
             method: 'post',
             url: '/',
-            payload: { content: 'test' }
+            payload: { content: 'test' },
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(201);

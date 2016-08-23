@@ -9,6 +9,7 @@ const Lab = require('lab');
 const expect = Code.expect;
 const lab = exports.lab = Lab.script();
 const beforeEach = lab.beforeEach;
+const before = lab.before;
 const describe = lab.describe;
 const it = lab.it;
 
@@ -19,6 +20,8 @@ let todoCreate = false;
 let todoBrowse = false;
 let todoRemove = false;
 let todoUpdate = false;
+
+let crumb;
 
 testServer.handler('todoCreate', () => {
 
@@ -61,8 +64,29 @@ testServer.handler('todoUpdate', () => {
 });
 
 testServer.route(TodoRoute);
+testServer.route({
+    path: '/',
+    method: 'get',
+    handler: (request, reply) => {
+
+        return reply('').code(200);
+    }
+});
 
 describe('server/route/todoRoute', () => {
+
+    before((done) => {
+
+        testServer.inject({
+            method: 'get',
+            url: '/'
+        }, (res) => {
+
+            crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
+
+            return done();
+        });
+    });
 
     beforeEach((done) => {
 
@@ -123,7 +147,8 @@ describe('server/route/todoRoute', () => {
 
         testServer.inject({
             method: 'delete',
-            url: restapi + '/someid'
+            url: restapi + '/someid',
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoRemove).to.equal(true);
@@ -138,7 +163,8 @@ describe('server/route/todoRoute', () => {
 
         testServer.inject({
             method: 'delete',
-            url: restapi + '/some'
+            url: restapi + '/some',
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoRemove).to.equal(false);
@@ -154,7 +180,8 @@ describe('server/route/todoRoute', () => {
         testServer.inject({
             method: 'post',
             url: restapi,
-            payload: { content: 'test' }
+            payload: { content: 'test' },
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoCreate).to.equal(true);
@@ -169,7 +196,8 @@ describe('server/route/todoRoute', () => {
 
         testServer.inject({
             method: 'post',
-            url: restapi
+            url: restapi,
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoCreate).to.equal(false);
@@ -185,7 +213,8 @@ describe('server/route/todoRoute', () => {
         testServer.inject({
             method: 'put',
             url: restapi,
-            payload: { id: 'test' }
+            payload: { id: 'test' },
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoUpdate).to.equal(true);
@@ -200,7 +229,8 @@ describe('server/route/todoRoute', () => {
 
         testServer.inject({
             method: 'put',
-            url: restapi
+            url: restapi,
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoUpdate).to.equal(false);

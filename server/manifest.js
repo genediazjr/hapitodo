@@ -46,6 +46,12 @@ const manifest = {
         },
         {
             plugin: {
+                register: 'crumb',
+                options: { restful: true }
+            }
+        },
+        {
+            plugin: {
                 register: 'acquaint',
                 options: {
                     routes: [{ includes: ['server/route/**/*.js'] }],

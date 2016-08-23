@@ -9,11 +9,14 @@ const Lab = require('lab');
 const expect = Code.expect;
 const lab = exports.lab = Lab.script();
 const beforeEach = lab.beforeEach;
+const before = lab.before;
 const describe = lab.describe;
 const it = lab.it;
 
 let testTodosDB = {};
 let testError = null;
+
+let crumb;
 
 testServer.method('todoModel.set', (todo, next) => {
 
@@ -33,11 +36,34 @@ testServer.method('todoModel.set', (todo, next) => {
 
 testServer.handler('todoUpdate', TodoUpdate);
 
-testServer.route({
-    path: '/',
-    method: 'put',
-    handler: { todoUpdate: {} },
-    config: { plugins: { errorh: false } }
+testServer.route([
+    {
+        path: '/',
+        method: 'get',
+        handler: (request, reply) => {
+
+            return reply('').code(200);
+        }
+    },
+    {
+        path: '/',
+        method: 'put',
+        handler: { todoUpdate: {} },
+        config: { plugins: { errorh: false } }
+    }
+]);
+
+before((done) => {
+
+    testServer.inject({
+        method: 'get',
+        url: '/'
+    }, (res) => {
+
+        crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
+
+        return done();
+    });
 });
 
 beforeEach((done) => {
@@ -57,7 +83,8 @@ describe('server/handler/todoUpdate', () => {
         testServer.inject({
             method: 'put',
             url: '/',
-            payload: { id: 'someId' }
+            payload: { id: 'someId' },
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -73,7 +100,8 @@ describe('server/handler/todoUpdate', () => {
         testServer.inject({
             method: 'put',
             url: '/',
-            payload: { id: 'someid', content: 'value' }
+            payload: { id: 'someid', content: 'value' },
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(404);
@@ -91,7 +119,8 @@ describe('server/handler/todoUpdate', () => {
         testServer.inject({
             method: 'put',
             url: '/',
-            payload: { id: 'someid', content: 'value' }
+            payload: { id: 'someid', content: 'value' },
+            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(200);
@@ -101,7 +130,8 @@ describe('server/handler/todoUpdate', () => {
             testServer.inject({
                 method: 'put',
                 url: '/',
-                payload: { id: 'someid', done: false }
+                payload: { id: 'someid', done: false },
+                headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
             }, (res) => {
 
                 expect(res.statusCode).to.equal(200);
@@ -111,7 +141,8 @@ describe('server/handler/todoUpdate', () => {
                 testServer.inject({
                     method: 'put',
                     url: '/',
-                    payload: { id: 'someid', done: true, content: 'othertask' }
+                    payload: { id: 'someid', done: true, content: 'othertask' },
+                    headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
                 }, (res) => {
 
                     expect(res.statusCode).to.equal(200);
