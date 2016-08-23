@@ -92,15 +92,15 @@ exports.set = function (todo, next) {
 
     if (!err) {
         if (this.todosDB[todo.id]) {
-            if (todo.hasOwnProperty('done')) {
+            if (Object.prototype.hasOwnProperty.call(todo, 'done')) {
                 this.todosDB[todo.id].done = todo.done;
             }
-            if (todo.hasOwnProperty('content')) {
+            if (Object.prototype.hasOwnProperty.call(todo, 'content')) {
                 this.todosDB[todo.id].content = todo.content;
             }
             isUpdated = true;
         }
-        else if (todo.id === 'all' && todo.hasOwnProperty('done')) {
+        else if (todo.id === 'all' && Object.prototype.hasOwnProperty.call(todo, 'done')) {
             const ids = Object.keys(this.todosDB);
             for (let i = 0; i < ids.length; ++i) {
                 this.todosDB[ids[i]].done = todo.done;
