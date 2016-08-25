@@ -14,7 +14,7 @@ const describe = lab.describe;
 const it = lab.it;
 
 const object = '/todo';
-const restapi = '/api/v1' + object;
+const restapi = `/api/v1${object}`;
 
 let todoCreate = false;
 let todoBrowse = false;
@@ -98,11 +98,11 @@ describe('server/route/todoRoute', () => {
         return done();
     });
 
-    it('has get path ' + restapi + '/list/{filter}', (done) => {
+    it(`has get path ${restapi}/list/{filter}`, (done) => {
 
         testServer.inject({
             method: 'get',
-            url: restapi + '/list/test'
+            url: `${restapi}/list/test`
         }, (res) => {
 
             expect(todoBrowse).to.equal(false);
@@ -111,7 +111,7 @@ describe('server/route/todoRoute', () => {
 
             testServer.inject({
                 method: 'get',
-                url: restapi + '/list/all'
+                url: `${restapi}/list/all`
             }, (res) => {
 
                 expect(todoBrowse).to.equal(true);
@@ -120,7 +120,7 @@ describe('server/route/todoRoute', () => {
 
                 testServer.inject({
                     method: 'get',
-                    url: restapi + '/list/active'
+                    url: `${restapi}/list/active`
                 }, (res) => {
 
                     expect(todoBrowse).to.equal(true);
@@ -129,7 +129,7 @@ describe('server/route/todoRoute', () => {
 
                     testServer.inject({
                         method: 'get',
-                        url: restapi + '/list/completed'
+                        url: `${restapi}/list/completed`
                     }, (res) => {
 
                         expect(todoBrowse).to.equal(true);
@@ -143,12 +143,12 @@ describe('server/route/todoRoute', () => {
         });
     });
 
-    it('has delete path ' + restapi + '/{id}', (done) => {
+    it(`has delete path ${restapi}/{id}`, (done) => {
 
         testServer.inject({
             method: 'delete',
-            url: restapi + '/someid',
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            url: `${restapi}/someid`,
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoRemove).to.equal(true);
@@ -159,13 +159,13 @@ describe('server/route/todoRoute', () => {
         });
     });
 
-    it('has post path ' + restapi, (done) => {
+    it(`has post path ${restapi}`, (done) => {
 
         testServer.inject({
             method: 'post',
             url: restapi,
             payload: { content: 'test' },
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoCreate).to.equal(true);
@@ -176,12 +176,12 @@ describe('server/route/todoRoute', () => {
         });
     });
 
-    it('has post path validation ' + restapi, (done) => {
+    it(`has post path validation ${restapi}`, (done) => {
 
         testServer.inject({
             method: 'post',
             url: restapi,
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoCreate).to.equal(false);
@@ -192,13 +192,13 @@ describe('server/route/todoRoute', () => {
         });
     });
 
-    it('has put path ' + restapi, (done) => {
+    it(`has put path ${restapi}`, (done) => {
 
         testServer.inject({
             method: 'put',
             url: restapi,
             payload: { id: 'test' },
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoUpdate).to.equal(true);
@@ -209,12 +209,12 @@ describe('server/route/todoRoute', () => {
         });
     });
 
-    it('has put path validation ' + restapi, (done) => {
+    it(`has put path validation ${restapi}`, (done) => {
 
         testServer.inject({
             method: 'put',
             url: restapi,
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(todoUpdate).to.equal(false);

@@ -143,7 +143,7 @@ jQuery(($) => {
         },
         restBrowse: function (filter, next) {
 
-            $.getJSON(REST_API + '/list/' + filter).always(next);
+            $.getJSON(`${REST_API}/list/${filter}`).always(next);
         },
         restCreate: function (todo, next) {
 
@@ -151,7 +151,7 @@ jQuery(($) => {
         },
         restRemove: function (id, next) {
 
-            $.ajax(REST_API + '/' + id, { method: 'delete' }).always(next);
+            $.ajax(`${REST_API}/${id}`, { method: 'delete' }).always(next);
         },
         restUpdate: function (todo, next) {
 
@@ -170,7 +170,7 @@ jQuery(($) => {
 
         if (csrf) {
             crumb = csrf;
-            document.cookie = 'crumb=' + csrf + '; path=/';
+            document.cookie = `crumb=${csrf}; path=/`;
         }
     });
 

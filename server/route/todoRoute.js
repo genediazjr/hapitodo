@@ -3,13 +3,13 @@
 const Joi = require('joi');
 const Schema = require('../schemas');
 const object = '/todo';
-const restapi = '/api/v1' + object;
+const restapi = `/api/v1${object}`;
 const plugins = { errorh: false };
 
 
 module.exports = [
     {
-        path: restapi + '/list/{filter}',
+        path: `${restapi}/list/{filter}`,
         method: 'get',
         handler: { todoBrowse: {} },
         config: {
@@ -21,7 +21,7 @@ module.exports = [
         }
     },
     {
-        path: restapi + '/{id}',
+        path: `${restapi}/{id}`,
         method: 'delete',
         handler: { todoRemove: {} },
         config: {

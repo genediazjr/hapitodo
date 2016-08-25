@@ -14,6 +14,6 @@ Composer((err, server) => {
             throw err;
         }
 
-        server.log([], 'Server started at ' + server.info.uri);
+        server.log([], `Server started at ${server.info.uri}`);
     });
 });

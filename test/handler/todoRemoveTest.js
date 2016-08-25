@@ -78,7 +78,7 @@ describe('server/handler/todoRemove', () => {
         testServer.inject({
             method: 'delete',
             url: '/someid',
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -94,7 +94,7 @@ describe('server/handler/todoRemove', () => {
         testServer.inject({
             method: 'delete',
             url: '/someid',
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(404);
@@ -112,7 +112,7 @@ describe('server/handler/todoRemove', () => {
         testServer.inject({
             method: 'delete',
             url: '/someid',
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(204);

@@ -84,7 +84,7 @@ describe('server/handler/todoUpdate', () => {
             method: 'put',
             url: '/',
             payload: { id: 'someId' },
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -101,7 +101,7 @@ describe('server/handler/todoUpdate', () => {
             method: 'put',
             url: '/',
             payload: { id: 'someid', content: 'value' },
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(404);
@@ -120,7 +120,7 @@ describe('server/handler/todoUpdate', () => {
             method: 'put',
             url: '/',
             payload: { id: 'someid', content: 'value' },
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(200);
@@ -131,7 +131,7 @@ describe('server/handler/todoUpdate', () => {
                 method: 'put',
                 url: '/',
                 payload: { id: 'someid', done: false },
-                headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+                headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
             }, (res) => {
 
                 expect(res.statusCode).to.equal(200);
@@ -142,7 +142,7 @@ describe('server/handler/todoUpdate', () => {
                     method: 'put',
                     url: '/',
                     payload: { id: 'someid', done: true, content: 'othertask' },
-                    headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+                    headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
                 }, (res) => {
 
                     expect(res.statusCode).to.equal(200);

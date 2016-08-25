@@ -77,7 +77,7 @@ describe('server/handler/todoCreate', () => {
             method: 'post',
             url: '/',
             payload: { content: 'test' },
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -95,7 +95,7 @@ describe('server/handler/todoCreate', () => {
             method: 'post',
             url: '/',
             payload: { content: 'test' },
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(201);

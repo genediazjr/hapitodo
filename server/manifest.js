@@ -34,7 +34,7 @@ const store = new Confidence.Store({
     server: {
         debug: false,
         connections: {
-            routes: { files: { relativeTo: process.cwd() + '/static' } },
+            routes: { files: { relativeTo: `${process.cwd()}/static` } },
             router: {
                 isCaseSensitive: false,
                 stripTrailingSlash: true
