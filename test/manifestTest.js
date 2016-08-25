@@ -15,6 +15,7 @@ describe('server/manifest', () => {
     it('gets manifest data', (done) => {
 
         expect(Manifest.get('/', {})).to.be.an.object();
+        expect(Manifest.get('/', { db: 'postgres' })).to.be.an.object();
 
         return done();
     });

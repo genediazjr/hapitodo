@@ -2,7 +2,7 @@
 
 const Joi = require('joi');
 const Confidence = require('confidence');
-const todoSchema = require('../schemas').todoSchema;
+const todoSchema = require('../../schemas').todoSchema;
 
 /*
 This model is for Demo purposes only.
@@ -86,7 +86,7 @@ exports.add = function (todo, next) {
 
 exports.set = function (todo, next) {
 
-    const requireId = todoSchema.requiredKeys('id');
+    const requireId = todoSchema.requiredKeys('id').or('done', 'content');
     const err = requireId.validate(todo).error;
     let isUpdated = false;
 

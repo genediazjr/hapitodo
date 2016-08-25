@@ -1,7 +1,7 @@
 'use strict';
 
-const TodoModel = require('../../server/method/todoModel');
-const testServer = require('../testServer')();
+const TodoModel = require('../../../server/method/json/todoModel');
+const testServer = require('../../testServer')();
 
 const Code = require('code');
 const Lab = require('lab');
@@ -29,7 +29,7 @@ beforeEach((done) => {
     return done();
 });
 
-describe('server/method/todoModel.row', () => {
+describe('server/method/json/todoModel.row', () => {
 
     it('lists all todos in an array', (done) => {
 
@@ -115,7 +115,7 @@ describe('server/method/todoModel.row', () => {
     });
 });
 
-describe('server/method/todoModel.del', () => {
+describe('server/method/json/todoModel.del', () => {
 
     it('returns an error if id is not a string', (done) => {
 
@@ -181,7 +181,7 @@ describe('server/method/todoModel.del', () => {
     });
 });
 
-describe('server/method/todoModel.add', () => {
+describe('server/method/json/todoModel.add', () => {
 
     it('returns an error if object is not valid', (done) => {
 
@@ -228,7 +228,7 @@ describe('server/method/todoModel.add', () => {
     });
 });
 
-describe('server/method/todoModel.set', () => {
+describe('server/method/json/todoModel.set', () => {
 
     it('returns an error if object is not valid', (done) => {
 

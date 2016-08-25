@@ -15,7 +15,8 @@
     "start": "node index.js",
     "test": "lab -c -v -L -a code",
     "test-cover": "lab -c -v -L -a code -r html -o ./coverage.html && open ./coverage.html",
-    "precompile": "handlebars static/mold/*.handlebars -f static/js/template.min.js -m"
+    "precompile": "handlebars static/mold/*.handlebars -f static/js/template.min.js -m",
+    "postgres": "DB='postgres' node index.js"
   },
   "dependencies": {
     "async": "2.0.x",
@@ -32,7 +33,10 @@
     "joi": "9.0.x",
     "good": "7.0.x",
     "good-squeeze": "4.0.x",
-    "good-console": "6.1.x"
+    "good-console": "6.1.x",
+    "pg": "6.1.x",
+    "pg-native": "1.10.x",
+    "proxyquire": "1.7.x"
   },
   "devDependencies": {
     "coveralls": "2.11.x",

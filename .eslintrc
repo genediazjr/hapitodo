@@ -154,7 +154,8 @@
       2,
       {
         "capIsNewExceptions": [
-          "Composer"
+          "Composer",
+          "Proxyquire"
         ]
       }
     ],

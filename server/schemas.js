@@ -2,9 +2,14 @@
 
 const Joi = require('joi');
 
-
-exports.todoSchema = Joi.object().keys({
+const todoSchema = {
     content: Joi.string().error(new Error('No task specified.')),
     done: Joi.boolean(),
     id: Joi.string()
-});
+};
+
+
+exports.todoObject = todoSchema;
+
+
+exports.todoSchema = Joi.object().keys(todoSchema);

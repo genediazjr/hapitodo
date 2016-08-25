@@ -159,22 +159,6 @@ describe('server/route/todoRoute', () => {
         });
     });
 
-    it('has delete path validation ' + restapi + '/{id}', (done) => {
-
-        testServer.inject({
-            method: 'delete',
-            url: restapi + '/some',
-            headers: { cookie: 'crumb=' + crumb, 'x-csrf-token': crumb }
-        }, (res) => {
-
-            expect(todoRemove).to.equal(false);
-            expect(res.statusCode).to.equal(400);
-            expect(res.result.message).to.contain('must be at least');
-
-            return done();
-        });
-    });
-
     it('has post path ' + restapi, (done) => {
 
         testServer.inject({

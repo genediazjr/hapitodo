@@ -11,10 +11,12 @@
 ```bash
 $ git clone https://github.com/genediazjr/hapitodo.git && cd hapitodo
 $ npm install            # download dependencies
-$ npm start              # run server
+$ npm start              # run server (uses json as db)
 $ npm test               # run test script
 $ npm run precompile     # precompile templates
+$ npm run postgres       # run server (uses postgre)
 ```
+You may modify the postgre connection string on the manifest.
 
 ## Contributing
 * Submit an issue first for significant changes.

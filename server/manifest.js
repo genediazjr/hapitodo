@@ -2,7 +2,13 @@
 
 const Confidence = require('confidence');
 
-const defaultCriteria = {};
+const defaultCriteria = exports.defaults = {
+    db: process.env.DB,
+    // $lab:coverage:off$
+    port: process.env.PORT || 8888,
+    connectionString: process.env.POSTGRES || 'postgres://hapitodo:hapitodo@localhost/hapitodo'
+    // $lab:coverage:on$
+};
 
 const errorhOptions = exports.errorhOptions = {
     errorFiles: {
@@ -23,7 +29,8 @@ const errorhOptions = exports.errorhOptions = {
     }
 };
 
-const manifest = {
+const store = new Confidence.Store({
+    connections: [{ port: defaultCriteria.port }],
     server: {
         debug: false,
         connections: {
@@ -57,9 +64,14 @@ const manifest = {
                     routes: [{ includes: ['server/route/**/*.js'] }],
                     handlers: [{ includes: ['server/handler/**/*.js'] }],
                     methods: [{
-                        includes: ['server/method/todoModel.js'],
-                        options: {
-                            bind: { todosDB: {} } // This is for demo purpose only.
+                        $filter: 'db',
+                        $default: {
+                            includes: ['server/method/json/*Model.js'],
+                            options: { bind: { todosDB: {} } } // This is for demo purpose only.
+                        },
+                        postgres: {
+                            includes: ['server/method/postgres/*Model.js'],
+                            options: { bind: { connectionString: defaultCriteria.connectionString } }
                         }
                     }]
                 }
@@ -84,13 +96,8 @@ const manifest = {
                 }
             }
         }
-    ],
-    // $lab:coverage:off$
-    connections: [{ port: process.env.PORT || 8888 }]
-    // $lab:coverage:on$
-};
-
-const store = new Confidence.Store(manifest);
+    ]
+});
 
 
 exports.get = (key, criteria) => {

@@ -12,7 +12,7 @@ module.exports = () => {
         return todo.set(request.payload, (err, isUpdated) => {
 
             if (err) {
-                // add logging here
+                request.server.log(['error'], err);
 
                 return reply(Boom.badImplementation());
             }

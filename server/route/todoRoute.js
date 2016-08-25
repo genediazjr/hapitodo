@@ -1,7 +1,7 @@
 'use strict';
 
 const Joi = require('joi');
-const todoSchema = require('../schemas').todoSchema;
+const Schema = require('../schemas');
 const object = '/todo';
 const restapi = '/api/v1' + object;
 const plugins = { errorh: false };
@@ -25,7 +25,7 @@ module.exports = [
         method: 'delete',
         handler: { todoRemove: {} },
         config: {
-            validate: { params: { id: Joi.string().min(5) } },
+            validate: { params: { id: Schema.todoObject.id } },
             plugins: plugins
         }
     },
@@ -34,7 +34,7 @@ module.exports = [
         method: 'post',
         handler: { todoCreate: {} },
         config: {
-            validate: { payload: todoSchema.requiredKeys('content') },
+            validate: { payload: Schema.todoSchema.requiredKeys('content') },
             plugins: plugins
         }
     },
@@ -43,7 +43,7 @@ module.exports = [
         method: 'put',
         handler: { todoUpdate: {} },
         config: {
-            validate: { payload: todoSchema.requiredKeys('id') },
+            validate: { payload: Schema.todoSchema.requiredKeys('id') },
             plugins: plugins
         }
     }

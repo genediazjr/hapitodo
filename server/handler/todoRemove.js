@@ -12,7 +12,7 @@ module.exports = () => {
         return todo.del(request.params.id, (err, isDeleted) => {
 
             if (err) {
-                // add logging here
+                request.server.log(['error'], err);
 
                 return reply(Boom.badImplementation());
             }
