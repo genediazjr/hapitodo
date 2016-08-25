@@ -1,9 +1,16 @@
 language: node_js
 node_js:
   - "6"
+  - "4"
 
-before_script:
-  - sudo apt-get install postgresql-server-dev-all
-  - sudo apt-get install postgresql-common
+sudo: false
+
+addons:
+  postgresql: 9.5
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 
 after_script: NODE_ENV=test lab --coverage-exclude static -r lcov | ./node_modules/.bin/coveralls
