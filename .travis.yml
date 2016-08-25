@@ -3,28 +3,17 @@ node_js:
   - "6"
   - "4"
 
-dist: trusty
-
 sudo: required
 
 env:
   - CC=clang CXX=clang++ npm_config_clang=1
 
 addons:
-  postgresql: 9.5
+  postgresql: "9.5"
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-
-matrix:
-  include:
-    - node_js: "4"
-      addons:
-        postgresql: "9.5"
-    - node_js: "6"
-      addons:
-        postgresql: "9.5"
 
 after_script: NODE_ENV=test lab --coverage-exclude static -r lcov | ./node_modules/.bin/coveralls
