@@ -31,4 +31,11 @@ describe('server/schemas.todoSchema', () => {
 
         return done();
     });
+
+    it('exposes a todoObject', (done) => {
+
+        expect(Schemas.todoObject).to.be.an.object();
+
+        return done();
+    });
 });
