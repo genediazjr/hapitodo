@@ -2,35 +2,36 @@
 
 const Confidence = require('confidence');
 
-const defaultCriteria = exports.defaults = {
-    db: process.env.DB,
-    // $lab:coverage:off$
-    port: process.env.PORT || 8888,
-    connectionString: process.env.POSTGRES || 'postgres://hapitodo:hapitodo@localhost/hapitodo'
-    // $lab:coverage:on$
-};
-
-const errorhOptions = exports.errorhOptions = {
-    errorFiles: {
-        404: '404.html',
-        default: '50x.html'
+const internals = {
+    defaults: {
+        db: process.env.DB,
+        // $lab:coverage:off$
+        port: process.env.PORT || 8888,
+        connectionString: process.env.POSTGRES || 'postgres://hapitodo:hapitodo@localhost/hapitodo'
+        // $lab:coverage:on$
     },
-    staticRoute: {
-        path: '/{path*}',
-        method: '*',
-        handler: {
-            directory: {
-                path: './',
-                index: true,
-                redirectToSlash: true
-            }
+    errorhOptions: {
+        errorFiles: {
+            404: '404.html',
+            default: '50x.html'
         },
-        config: { plugins: { blankie: false } }
+        staticRoute: {
+            path: '/{path*}',
+            method: '*',
+            handler: {
+                directory: {
+                    path: './',
+                    index: true,
+                    redirectToSlash: true
+                }
+            },
+            config: { plugins: { blankie: false } }
+        }
     }
 };
 
 const store = new Confidence.Store({
-    connections: [{ port: defaultCriteria.port }],
+    connections: [{ port: internals.defaults.port }],
     server: {
         debug: false,
         connections: {
@@ -48,7 +49,7 @@ const store = new Confidence.Store({
         {
             plugin: {
                 register: 'errorh',
-                options: errorhOptions
+                options: internals.errorhOptions
             }
         },
         {
@@ -71,7 +72,7 @@ const store = new Confidence.Store({
                         },
                         postgres: {
                             includes: ['server/method/postgres/*Model.js'],
-                            options: { bind: { connectionString: defaultCriteria.connectionString } }
+                            options: { bind: { connectionString: internals.defaults.connectionString } }
                         }
                     }]
                 }
@@ -100,7 +101,13 @@ const store = new Confidence.Store({
 });
 
 
+exports.defaults = internals.defaults;
+
+
+exports.errorhOptions = internals.errorhOptions;
+
+
 exports.get = (key, criteria) => {
 
-    return store.get(key, criteria || defaultCriteria);
+    return store.get(key, criteria || internals.defaults);
 };

@@ -13,25 +13,26 @@ const before = lab.before;
 const describe = lab.describe;
 const it = lab.it;
 
-let testTodosDB = {};
-let testError = null;
-
-let crumb;
+const internals = {
+    testTodosDB: {},
+    testError: null,
+    crumb: null
+};
 
 testServer.method('todoModel.set', (todo, next) => {
 
     let isUpdated = false;
-    if (testTodosDB[todo.id]) {
+    if (internals.testTodosDB[todo.id]) {
         isUpdated = true;
         if (todo.hasOwnProperty('done')) {
-            testTodosDB[todo.id].done = todo.done;
+            internals.testTodosDB[todo.id].done = todo.done;
         }
         if (todo.hasOwnProperty('content')) {
-            testTodosDB[todo.id].content = todo.content;
+            internals.testTodosDB[todo.id].content = todo.content;
         }
     }
 
-    return next(testError, isUpdated);
+    return next(internals.testError, isUpdated);
 });
 
 testServer.handler('todoUpdate', TodoUpdate);
@@ -60,7 +61,7 @@ before((done) => {
         url: '/'
     }, (res) => {
 
-        crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
+        internals.crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
 
         return done();
     });
@@ -68,8 +69,8 @@ before((done) => {
 
 beforeEach((done) => {
 
-    testTodosDB = {};
-    testError = null;
+    internals.testTodosDB = {};
+    internals.testError = null;
 
     return done();
 });
@@ -78,13 +79,13 @@ describe('server/handler/todoUpdate', () => {
 
     it('returns 500 if model has error', (done) => {
 
-        testError = new Error('some error');
+        internals.testError = new Error('some error');
 
         testServer.inject({
             method: 'put',
             url: '/',
             payload: { id: 'someId' },
-            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -101,7 +102,7 @@ describe('server/handler/todoUpdate', () => {
             method: 'put',
             url: '/',
             payload: { id: 'someid', content: 'value' },
-            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(404);
@@ -114,40 +115,40 @@ describe('server/handler/todoUpdate', () => {
 
     it('returns 200 json success if todo is updated', (done) => {
 
-        testTodosDB.someid = { id: 'someid', done: true, content: 'sometask' };
+        internals.testTodosDB.someid = { id: 'someid', done: true, content: 'sometask' };
 
         testServer.inject({
             method: 'put',
             url: '/',
             payload: { id: 'someid', content: 'value' },
-            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(200);
             expect(res.result.hasOwnProperty('success')).to.equal(true);
-            expect(testTodosDB.someid).to.equal({ id: 'someid', done: true, content: 'value' });
+            expect(internals.testTodosDB.someid).to.equal({ id: 'someid', done: true, content: 'value' });
 
             testServer.inject({
                 method: 'put',
                 url: '/',
                 payload: { id: 'someid', done: false },
-                headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+                headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
             }, (res) => {
 
                 expect(res.statusCode).to.equal(200);
                 expect(res.result.hasOwnProperty('success')).to.equal(true);
-                expect(testTodosDB.someid).to.equal({ id: 'someid', done: false, content: 'value' });
+                expect(internals.testTodosDB.someid).to.equal({ id: 'someid', done: false, content: 'value' });
 
                 testServer.inject({
                     method: 'put',
                     url: '/',
                     payload: { id: 'someid', done: true, content: 'othertask' },
-                    headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+                    headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
                 }, (res) => {
 
                     expect(res.statusCode).to.equal(200);
                     expect(res.result.hasOwnProperty('success')).to.equal(true);
-                    expect(testTodosDB.someid).to.equal({ id: 'someid', done: true, content: 'othertask' });
+                    expect(internals.testTodosDB.someid).to.equal({ id: 'someid', done: true, content: 'othertask' });
 
                     return done();
                 });

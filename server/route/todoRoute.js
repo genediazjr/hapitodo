@@ -2,14 +2,16 @@
 
 const Joi = require('joi');
 const Schema = require('../schemas');
-const object = '/todo';
-const restapi = `/api/v1${object}`;
-const plugins = { errorh: false };
+
+const internals = {
+    restapi: '/api/v1/todo',
+    plugins: { errorh: false }
+};
 
 
 module.exports = [
     {
-        path: `${restapi}/list/{filter}`,
+        path: `${internals.restapi}/list/{filter}`,
         method: 'get',
         handler: { todoBrowse: {} },
         config: {
@@ -21,30 +23,30 @@ module.exports = [
         }
     },
     {
-        path: `${restapi}/{id}`,
+        path: `${internals.restapi}/{id}`,
         method: 'delete',
         handler: { todoRemove: {} },
         config: {
             validate: { params: { id: Schema.todoObject.id } },
-            plugins: plugins
+            plugins: internals.plugins
         }
     },
     {
-        path: restapi,
+        path: internals.restapi,
         method: 'post',
         handler: { todoCreate: {} },
         config: {
             validate: { payload: Schema.todoSchema.requiredKeys('content') },
-            plugins: plugins
+            plugins: internals.plugins
         }
     },
     {
-        path: restapi,
+        path: internals.restapi,
         method: 'put',
         handler: { todoUpdate: {} },
         config: {
             validate: { payload: Schema.todoSchema.requiredKeys('id') },
-            plugins: plugins
+            plugins: internals.plugins
         }
     }
 ];

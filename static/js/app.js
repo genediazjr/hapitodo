@@ -7,10 +7,12 @@ jQuery(($) => {
         return a === b ? options.fn(this) : options.inverse(this);
     });
 
-    const ESCAPE_KEY = 27;
-    const ENTER_KEY = 13;
-    const REST_API = '/api/v1/todo';
-    let crumb;
+    const internals = {
+        ESCAPE_KEY: 27,
+        ENTER_KEY: 13,
+        REST_API: '/api/v1/todo',
+        crumb: ''
+    };
 
     const App = {
         init: function () {
@@ -55,7 +57,7 @@ jQuery(($) => {
             const $input = $(e.target);
             const val = $input.val().trim();
 
-            if (e.which === ENTER_KEY && val) {
+            if (e.which === internals.ENTER_KEY && val) {
                 this.restCreate({ content: val }, () => {
                     this.todoFilter(this.filter);
                     $input.val('');
@@ -110,11 +112,11 @@ jQuery(($) => {
 
             const input = e.target;
 
-            if (e.which === ENTER_KEY) {
+            if (e.which === internals.ENTER_KEY) {
                 input.blur();
             }
 
-            if (e.which === ESCAPE_KEY) {
+            if (e.which === internals.ESCAPE_KEY) {
                 $(input).data('abort', true).blur();
             }
         },
@@ -143,25 +145,25 @@ jQuery(($) => {
         },
         restBrowse: function (filter, next) {
 
-            $.getJSON(`${REST_API}/list/${filter}`).always(next);
+            $.getJSON(`${internals.REST_API}/list/${filter}`).always(next);
         },
         restCreate: function (todo, next) {
 
-            $.post(REST_API, todo).always(next);
+            $.post(internals.REST_API, todo).always(next);
         },
         restRemove: function (id, next) {
 
-            $.ajax(`${REST_API}/${id}`, { method: 'delete' }).always(next);
+            $.ajax(`${internals.REST_API}/${id}`, { method: 'delete' }).always(next);
         },
         restUpdate: function (todo, next) {
 
-            $.ajax(REST_API, { data: todo, method: 'put' }).always(next);
+            $.ajax(internals.REST_API, { data: todo, method: 'put' }).always(next);
         }
     };
 
     $(document).ajaxSend((e, xhr) => {
 
-        xhr.setRequestHeader('x-csrf-token', crumb);
+        xhr.setRequestHeader('x-csrf-token', internals.crumb);
     });
 
     $(document).ajaxSuccess((e, xhr) => {
@@ -169,7 +171,7 @@ jQuery(($) => {
         const csrf = xhr.getResponseHeader('x-csrf-token');
 
         if (csrf) {
-            crumb = csrf;
+            internals.crumb = csrf;
             document.cookie = `crumb=${csrf}; path=/`;
         }
     });

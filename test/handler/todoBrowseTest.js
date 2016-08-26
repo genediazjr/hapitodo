@@ -12,15 +12,17 @@ const beforeEach = lab.beforeEach;
 const describe = lab.describe;
 const it = lab.it;
 
-let testTodosDB = [];
-let testError = null;
-let testFilter = null;
+const internals = {
+    testTodosDB: [],
+    testError: null,
+    testFilter: null
+};
 
 testServer.method('todoModel.row', (filter, next) => {
 
-    testFilter = filter;
+    internals.testFilter = filter;
 
-    return next(testError, testTodosDB);
+    return next(internals.testError, internals.testTodosDB);
 });
 
 testServer.handler('todoBrowse', TodoBrowse);
@@ -34,9 +36,9 @@ testServer.route({
 
 beforeEach((done) => {
 
-    testTodosDB = [];
-    testError = null;
-    testFilter = null;
+    internals.testTodosDB = [];
+    internals.testError = null;
+    internals.testFilter = null;
 
     return done();
 });
@@ -45,7 +47,7 @@ describe('server/handler/todoBrowse', () => {
 
     it('returns 500 if model has error', (done) => {
 
-        testError = new Error('some error');
+        internals.testError = new Error('some error');
 
         testServer.inject({
             method: 'get',
@@ -62,7 +64,7 @@ describe('server/handler/todoBrowse', () => {
 
     it('returns 200 json of todo list', (done) => {
 
-        testTodosDB = [{ id: 'someId', done: false, content: 'sometask' }];
+        internals.testTodosDB = [{ id: 'someId', done: false, content: 'sometask' }];
 
         testServer.inject({
             method: 'get',
@@ -70,7 +72,7 @@ describe('server/handler/todoBrowse', () => {
         }, (res) => {
 
             expect(res.statusCode).to.equal(200);
-            expect(testFilter).to.equal('somefilter');
+            expect(internals.testFilter).to.equal('somefilter');
             expect(res.result).to.equal([{ id: 'someId', done: false, content: 'sometask' }]);
 
             return done();
@@ -79,7 +81,7 @@ describe('server/handler/todoBrowse', () => {
 
     it('returns 200 json of empty list even if db is null', (done) => {
 
-        testTodosDB = null;
+        internals.testTodosDB = null;
 
         testServer.inject({
             method: 'get',
@@ -87,7 +89,7 @@ describe('server/handler/todoBrowse', () => {
         }, (res) => {
 
             expect(res.statusCode).to.equal(200);
-            expect(testFilter).to.equal('otherfilter');
+            expect(internals.testFilter).to.equal('otherfilter');
             expect(res.result).to.equal({});
 
             return done();

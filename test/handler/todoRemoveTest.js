@@ -13,20 +13,21 @@ const before = lab.before;
 const describe = lab.describe;
 const it = lab.it;
 
-let testTodosDB = {};
-let testError = null;
-
-let crumb;
+const internals = {
+    testTodosDB: {},
+    testError: null,
+    crumb: null
+};
 
 testServer.method('todoModel.del', (id, next) => {
 
     let isDeleted = false;
-    if (testTodosDB[id]) {
+    if (internals.testTodosDB[id]) {
         isDeleted = true;
-        delete testTodosDB[id];
+        delete internals.testTodosDB[id];
     }
 
-    return next(testError, isDeleted);
+    return next(internals.testError, isDeleted);
 });
 
 testServer.handler('todoRemove', TodoRemove);
@@ -55,7 +56,7 @@ before((done) => {
         url: '/'
     }, (res) => {
 
-        crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
+        internals.crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
 
         return done();
     });
@@ -63,8 +64,8 @@ before((done) => {
 
 beforeEach((done) => {
 
-    testTodosDB = {};
-    testError = null;
+    internals.testTodosDB = {};
+    internals.testError = null;
 
     return done();
 });
@@ -73,12 +74,12 @@ describe('server/handler/todoRemove', () => {
 
     it('returns 500 if model has error', (done) => {
 
-        testError = new Error('some error');
+        internals.testError = new Error('some error');
 
         testServer.inject({
             method: 'delete',
             url: '/someid',
-            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -94,7 +95,7 @@ describe('server/handler/todoRemove', () => {
         testServer.inject({
             method: 'delete',
             url: '/someid',
-            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(404);
@@ -107,17 +108,17 @@ describe('server/handler/todoRemove', () => {
 
     it('returns 200 json success if todo is deleted', (done) => {
 
-        testTodosDB.someid = { id: 'someid', done: true, content: 'sometask' };
+        internals.testTodosDB.someid = { id: 'someid', done: true, content: 'sometask' };
 
         testServer.inject({
             method: 'delete',
             url: '/someid',
-            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(204);
             expect(res.result).to.not.exist();
-            expect(testTodosDB).to.equal({});
+            expect(internals.testTodosDB).to.equal({});
 
             return done();
         });

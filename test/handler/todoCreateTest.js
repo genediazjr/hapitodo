@@ -13,18 +13,19 @@ const before = lab.before;
 const describe = lab.describe;
 const it = lab.it;
 
-let testTodosDB = [];
-let testError = null;
-
-let crumb;
+const internals = {
+    testTodosDB: [],
+    testError: null,
+    crumb: null
+};
 
 testServer.method('todoModel.add', (todo, next) => {
 
     if (todo) {
-        testTodosDB.push(todo);
+        internals.testTodosDB.push(todo);
     }
 
-    return next(testError, testTodosDB);
+    return next(internals.testError, internals.testTodosDB);
 });
 
 testServer.handler('todoCreate', TodoCreate);
@@ -53,7 +54,7 @@ before((done) => {
         url: '/'
     }, (res) => {
 
-        crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
+        internals.crumb = res.headers['set-cookie'][0].split(';')[0].replace('crumb=', '');
 
         return done();
     });
@@ -61,8 +62,8 @@ before((done) => {
 
 beforeEach((done) => {
 
-    testTodosDB = [];
-    testError = null;
+    internals.testTodosDB = [];
+    internals.testError = null;
 
     return done();
 });
@@ -71,13 +72,13 @@ describe('server/handler/todoCreate', () => {
 
     it('returns 500 if model has error', (done) => {
 
-        testError = new Error('some error');
+        internals.testError = new Error('some error');
 
         testServer.inject({
             method: 'post',
             url: '/',
             payload: { content: 'test' },
-            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(500);
@@ -95,12 +96,12 @@ describe('server/handler/todoCreate', () => {
             method: 'post',
             url: '/',
             payload: { content: 'test' },
-            headers: { cookie: `crumb=${crumb}`, 'x-csrf-token': crumb }
+            headers: { cookie: `crumb=${internals.crumb}`, 'x-csrf-token': internals.crumb }
         }, (res) => {
 
             expect(res.statusCode).to.equal(201);
             expect(res.result.hasOwnProperty('success')).to.equal(true);
-            expect(testTodosDB[0]).to.equal({ content: 'test' });
+            expect(internals.testTodosDB[0]).to.equal({ content: 'test' });
 
             return done();
         });

@@ -12,11 +12,14 @@ const beforeEach = lab.beforeEach;
 const describe = lab.describe;
 const it = lab.it;
 
-let connErr = false;
-let isDone = false;
-let query = (query, queryNext) => {
+const internals = {
+    options: { bind: { connectionString: 'someString' } },
+    connErr: false,
+    isDone: false,
+    query: (query, queryNext) => {
 
-    return queryNext();
+        return queryNext();
+    }
 };
 
 const stub = {
@@ -24,9 +27,9 @@ const stub = {
         native: {
             connect: (connStr, connNext) => {
 
-                return connNext(connErr, { query: query }, () => {
+                return connNext(internals.connErr, { query: internals.query }, () => {
 
-                    isDone = true;
+                    internals.isDone = true;
                 });
             }
         }
@@ -34,20 +37,19 @@ const stub = {
 };
 
 const TodoModel = Proxyquire('../../../server/method/postgres/todoModel', stub);
-const options = { bind: { connectionString: 'someString' } };
 
-testServer.method('todoModel.row', TodoModel.row, options);
-testServer.method('todoModel.del', TodoModel.del, options);
-testServer.method('todoModel.add', TodoModel.add, options);
-testServer.method('todoModel.set', TodoModel.set, options);
+testServer.method('todoModel.row', TodoModel.row, internals.options);
+testServer.method('todoModel.del', TodoModel.del, internals.options);
+testServer.method('todoModel.add', TodoModel.add, internals.options);
+testServer.method('todoModel.set', TodoModel.set, internals.options);
 
 const todoModel = testServer.methods.todoModel;
 
 beforeEach((done) => {
 
-    connErr = false;
-    isDone = false;
-    query = (query, queryNext) => {
+    internals.connErr = false;
+    internals.isDone = false;
+    internals.query = (query, queryNext) => {
 
         return queryNext();
     };
@@ -59,21 +61,21 @@ describe('server/method/postgres/todoModel', () => {
 
     it('throws on connection error', (done) => {
 
-        connErr = new Error('connError');
+        internals.connErr = new Error('connError');
 
         expect(() => {
 
             Proxyquire('../../../server/method/postgres/todoModel', stub);
         }).to.throw(/connError/);
 
-        expect(isDone).to.equal(true);
+        expect(internals.isDone).to.equal(true);
 
         return done();
     });
 
     it('throws on query error', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             return queryNext(new Error('queryError'));
         };
@@ -83,7 +85,7 @@ describe('server/method/postgres/todoModel', () => {
             Proxyquire('../../../server/method/postgres/todoModel', stub);
         }).to.throw(/queryError/);
 
-        expect(isDone).to.equal(true);
+        expect(internals.isDone).to.equal(true);
 
         return done();
     });
@@ -93,27 +95,27 @@ describe('server/method/postgres/todoModel.row', () => {
 
     it('returns an error on connection error', (done) => {
 
-        connErr = true;
+        internals.connErr = true;
 
         todoModel.row('all', (err, todoList) => {
 
-            expect(isDone).to.equal(false);
+            expect(internals.isDone).to.equal(false);
             expect(err).to.exist();
             expect(todoList).to.not.exist();
 
-            isDone = false;
+            internals.isDone = false;
 
             todoModel.row('active', (err, todoList) => {
 
-                expect(isDone).to.equal(false);
+                expect(internals.isDone).to.equal(false);
                 expect(err).to.exist();
                 expect(todoList).to.not.exist();
 
-                isDone = false;
+                internals.isDone = false;
 
                 todoModel.row('completed', (err, todoList) => {
 
-                    expect(isDone).to.equal(false);
+                    expect(internals.isDone).to.equal(false);
                     expect(err).to.exist();
                     expect(todoList).to.not.exist();
 
@@ -125,7 +127,7 @@ describe('server/method/postgres/todoModel.row', () => {
 
     it('returns an error on query error', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             let queryErr = false;
 
@@ -138,13 +140,13 @@ describe('server/method/postgres/todoModel.row', () => {
 
         todoModel.row('all', (err, todoList) => {
 
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
             expect(err).to.exist();
             expect(todoList).to.not.exist();
 
-            isDone = false;
+            internals.isDone = false;
 
-            query = (query, queryNext) => {
+            internals.query = (query, queryNext) => {
 
                 let queryErr = false;
 
@@ -157,13 +159,13 @@ describe('server/method/postgres/todoModel.row', () => {
 
             todoModel.row('all', (err, todoList) => {
 
-                expect(isDone).to.equal(true);
+                expect(internals.isDone).to.equal(true);
                 expect(err).to.exist();
                 expect(todoList).to.not.exist();
 
-                isDone = false;
+                internals.isDone = false;
 
-                query = (query, queryNext) => {
+                internals.query = (query, queryNext) => {
 
                     let queryErr = false;
 
@@ -176,7 +178,7 @@ describe('server/method/postgres/todoModel.row', () => {
 
                 todoModel.row('all', (err, todoList) => {
 
-                    expect(isDone).to.equal(true);
+                    expect(internals.isDone).to.equal(true);
                     expect(err).to.exist();
                     expect(todoList).to.not.exist();
 
@@ -188,7 +190,7 @@ describe('server/method/postgres/todoModel.row', () => {
 
     it('lists all todos in an array', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             let queryResult;
 
@@ -213,7 +215,7 @@ describe('server/method/postgres/todoModel.row', () => {
 
         todoModel.row('all', (err, todoList) => {
 
-            expect(isDone).to.be.true();
+            expect(internals.isDone).to.be.true();
             expect(err).to.not.exist();
             expect(todoList).to.equal({
                 totalTodoCount: 0,
@@ -222,11 +224,11 @@ describe('server/method/postgres/todoModel.row', () => {
                 list: []
             });
 
-            isDone = false;
+            internals.isDone = false;
 
             todoModel.row('active', (err, todoList) => {
 
-                expect(isDone).to.be.true();
+                expect(internals.isDone).to.be.true();
                 expect(err).to.not.exist();
                 expect(todoList).to.equal({
                     totalTodoCount: 0,
@@ -235,11 +237,11 @@ describe('server/method/postgres/todoModel.row', () => {
                     list: []
                 });
 
-                isDone = false;
+                internals.isDone = false;
 
                 todoModel.row('completed', (err, todoList) => {
 
-                    expect(isDone).to.be.true();
+                    expect(internals.isDone).to.be.true();
                     expect(err).to.not.exist();
                     expect(todoList).to.equal({
                         totalTodoCount: 0,
@@ -248,7 +250,7 @@ describe('server/method/postgres/todoModel.row', () => {
                         list: []
                     });
 
-                    query = (query, queryNext) => {
+                    internals.query = (query, queryNext) => {
 
                         let queryResult;
 
@@ -278,7 +280,7 @@ describe('server/method/postgres/todoModel.row', () => {
 
                     todoModel.row('all', (err, todoList) => {
 
-                        expect(isDone).to.be.true();
+                        expect(internals.isDone).to.be.true();
                         expect(err).to.not.exist();
                         expect(todoList).to.equal({
                             totalTodoCount: 2,
@@ -290,11 +292,11 @@ describe('server/method/postgres/todoModel.row', () => {
                             ]
                         });
 
-                        isDone = false;
+                        internals.isDone = false;
 
                         todoModel.row('active', (err, todoList) => {
 
-                            expect(isDone).to.be.true();
+                            expect(internals.isDone).to.be.true();
                             expect(err).to.not.exist();
                             expect(todoList).to.equal({
                                 totalTodoCount: 2,
@@ -305,11 +307,11 @@ describe('server/method/postgres/todoModel.row', () => {
                                 ]
                             });
 
-                            isDone = false;
+                            internals.isDone = false;
 
                             todoModel.row('completed', (err, todoList) => {
 
-                                expect(isDone).to.be.true();
+                                expect(internals.isDone).to.be.true();
                                 expect(err).to.not.exist();
                                 expect(todoList).to.equal({
                                     totalTodoCount: 2,
@@ -334,13 +336,13 @@ describe('server/method/postgres/todoModel.del', () => {
 
     it('returns an error on connection error', (done) => {
 
-        connErr = true;
+        internals.connErr = true;
 
         todoModel.del('someId', (err, isDeleted) => {
 
             expect(err).to.exist();
             expect(isDeleted).to.equal(false);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -348,7 +350,7 @@ describe('server/method/postgres/todoModel.del', () => {
 
     it('returns an error on query error', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             return queryNext(true);
         };
@@ -357,7 +359,7 @@ describe('server/method/postgres/todoModel.del', () => {
 
             expect(err).to.exist();
             expect(isDeleted).to.equal(false);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -369,13 +371,13 @@ describe('server/method/postgres/todoModel.del', () => {
 
             expect(err).to.exist();
             expect(isDeleted).to.equal(false);
-            expect(isDone).to.equal(false);
+            expect(internals.isDone).to.equal(false);
 
             todoModel.del(1, (err, isDeleted) => {
 
                 expect(err).to.exist();
                 expect(isDeleted).to.equal(false);
-                expect(isDone).to.equal(false);
+                expect(internals.isDone).to.equal(false);
 
                 return done();
             });
@@ -384,7 +386,7 @@ describe('server/method/postgres/todoModel.del', () => {
 
     it('deletes one id', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             expect(query.text).to.be.equal('DELETE FROM todos WHERE id = $1');
             expect(query.values[0]).to.be.equal('someId');
@@ -396,7 +398,7 @@ describe('server/method/postgres/todoModel.del', () => {
 
             expect(err).to.not.exist();
             expect(isDeleted).to.equal(1);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -404,7 +406,7 @@ describe('server/method/postgres/todoModel.del', () => {
 
     it('deletes all completed', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             expect(query).to.be.equal('DELETE FROM todos WHERE done = true');
 
@@ -415,7 +417,7 @@ describe('server/method/postgres/todoModel.del', () => {
 
             expect(err).to.not.exist();
             expect(isDeleted).to.equal(1);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -423,7 +425,7 @@ describe('server/method/postgres/todoModel.del', () => {
 
     it('returns 0 if id does not exist', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             expect(query.text).to.be.equal('DELETE FROM todos WHERE id = $1');
             expect(query.values[0]).to.be.equal('someId');
@@ -435,7 +437,7 @@ describe('server/method/postgres/todoModel.del', () => {
 
             expect(err).to.not.exist();
             expect(isDeleted).to.equal(0);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -446,13 +448,13 @@ describe('server/method/postgres/todoModel.add', () => {
 
     it('returns an error on connection error', (done) => {
 
-        connErr = true;
+        internals.connErr = true;
 
         todoModel.add({ done: true, content: 'test2' }, (err, id) => {
 
             expect(id).to.not.exist();
             expect(err).to.exist();
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -460,7 +462,7 @@ describe('server/method/postgres/todoModel.add', () => {
 
     it('returns an error on query error', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             return queryNext(true);
         };
@@ -469,7 +471,7 @@ describe('server/method/postgres/todoModel.add', () => {
 
             expect(id).to.not.exist();
             expect(err).to.exist();
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -480,17 +482,17 @@ describe('server/method/postgres/todoModel.add', () => {
         todoModel.add({ test: true }, (err) => {
 
             expect(err).to.exist();
-            expect(isDone).to.equal(false);
+            expect(internals.isDone).to.equal(false);
 
             todoModel.add({ content: 888 }, (err) => {
 
                 expect(err).to.exist();
-                expect(isDone).to.equal(false);
+                expect(internals.isDone).to.equal(false);
 
                 todoModel.add({}, (err) => {
 
                     expect(err).to.exist();
-                    expect(isDone).to.equal(false);
+                    expect(internals.isDone).to.equal(false);
 
                     return done();
                 });
@@ -500,7 +502,7 @@ describe('server/method/postgres/todoModel.add', () => {
 
     it('saves the object if it is valid', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             expect(query.text).to.be.equal('INSERT INTO todos (content, done) VALUES ($1, $2) RETURNING id');
             expect(query.values).to.be.equal(['test', false]);
@@ -512,9 +514,9 @@ describe('server/method/postgres/todoModel.add', () => {
 
             expect(id).to.equal(1);
             expect(err).to.not.exist();
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
-            query = (query, queryNext) => {
+            internals.query = (query, queryNext) => {
 
                 expect(query.text).to.be.equal('INSERT INTO todos (content, done) VALUES ($1, $2) RETURNING id');
                 expect(query.values).to.be.equal(['test2', true]);
@@ -526,7 +528,7 @@ describe('server/method/postgres/todoModel.add', () => {
 
                 expect(id).to.equal(2);
                 expect(err).to.not.exist();
-                expect(isDone).to.equal(true);
+                expect(internals.isDone).to.equal(true);
 
                 return done();
             });
@@ -538,13 +540,13 @@ describe('server/method/postgres/todoModel.set', () => {
 
     it('returns an error on connection error', (done) => {
 
-        connErr = true;
+        internals.connErr = true;
 
         todoModel.set({ id: 'someId', done: true }, (err, isUpdated) => {
 
             expect(err).to.exist();
             expect(isUpdated).to.equal(false);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -552,7 +554,7 @@ describe('server/method/postgres/todoModel.set', () => {
 
     it('returns an error on query error', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             return queryNext(true);
         };
@@ -561,7 +563,7 @@ describe('server/method/postgres/todoModel.set', () => {
 
             expect(err).to.exist();
             expect(isUpdated).to.equal(false);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
@@ -573,19 +575,19 @@ describe('server/method/postgres/todoModel.set', () => {
 
             expect(err).to.exist();
             expect(isUpdated).to.equal(false);
-            expect(isDone).to.equal(false);
+            expect(internals.isDone).to.equal(false);
 
             todoModel.set({ id: 888 }, (err, isUpdated) => {
 
                 expect(err).to.exist();
                 expect(isUpdated).to.equal(false);
-                expect(isDone).to.equal(false);
+                expect(internals.isDone).to.equal(false);
 
                 todoModel.set({}, (err, isUpdated) => {
 
                     expect(err).to.exist();
                     expect(isUpdated).to.equal(false);
-                    expect(isDone).to.equal(false);
+                    expect(internals.isDone).to.equal(false);
 
                     return done();
                 });
@@ -595,7 +597,7 @@ describe('server/method/postgres/todoModel.set', () => {
 
     it('updates object', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             expect(query.text).to.be.equal('UPDATE todos SET content = $1 WHERE id = $2');
             expect(query.values).to.be.equal(['valtest', 'someId']);
@@ -607,9 +609,9 @@ describe('server/method/postgres/todoModel.set', () => {
 
             expect(err).to.not.exist();
             expect(isUpdated).to.equal(1);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
-            query = (query, queryNext) => {
+            internals.query = (query, queryNext) => {
 
                 expect(query.text).to.be.equal('UPDATE todos SET done = $1 WHERE id = $2');
                 expect(query.values).to.be.equal([true, 'someId']);
@@ -621,7 +623,7 @@ describe('server/method/postgres/todoModel.set', () => {
 
                 expect(err).to.not.exist();
                 expect(isUpdated).to.equal(1);
-                expect(isDone).to.equal(true);
+                expect(internals.isDone).to.equal(true);
 
                 return done();
             });
@@ -630,7 +632,7 @@ describe('server/method/postgres/todoModel.set', () => {
 
     it('updates all to active or completed', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             expect(query.text).to.be.equal('UPDATE todos SET done = $1');
             expect(query.values).to.be.equal([true]);
@@ -642,9 +644,9 @@ describe('server/method/postgres/todoModel.set', () => {
 
             expect(err).to.not.exist();
             expect(isUpdated).to.equal(1);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
-            query = (query, queryNext) => {
+            internals.query = (query, queryNext) => {
 
                 expect(query.text).to.be.equal('UPDATE todos SET done = $1');
                 expect(query.values).to.be.equal([false]);
@@ -656,7 +658,7 @@ describe('server/method/postgres/todoModel.set', () => {
 
                 expect(err).to.not.exist();
                 expect(isUpdated).to.equal(1);
-                expect(isDone).to.equal(true);
+                expect(internals.isDone).to.equal(true);
 
                 return done();
             });
@@ -665,7 +667,7 @@ describe('server/method/postgres/todoModel.set', () => {
 
     it('returns false if id does not exist', (done) => {
 
-        query = (query, queryNext) => {
+        internals.query = (query, queryNext) => {
 
             expect(query.text).to.be.equal('UPDATE todos SET content = $1 done = $2 WHERE id = $3');
             expect(query.values).to.be.equal(['valtest', true, 'someId']);
@@ -677,7 +679,7 @@ describe('server/method/postgres/todoModel.set', () => {
 
             expect(err).to.not.exist();
             expect(isUpdated).to.equal(0);
-            expect(isDone).to.equal(true);
+            expect(internals.isDone).to.equal(true);
 
             return done();
         });
