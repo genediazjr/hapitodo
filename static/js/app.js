@@ -11,7 +11,7 @@ jQuery(($) => {
         ESCAPE_KEY: 27,
         ENTER_KEY: 13,
         REST_API: '/api/v1/todo',
-        crumb: ''
+        crumb: null
     };
 
     const App = {
@@ -163,7 +163,9 @@ jQuery(($) => {
 
     $(document).ajaxSend((e, xhr) => {
 
-        xhr.setRequestHeader('x-csrf-token', internals.crumb);
+        if (internals.crumb) {
+            xhr.setRequestHeader('x-csrf-token', internals.crumb);
+        }
     });
 
     $(document).ajaxSuccess((e, xhr) => {
@@ -172,7 +174,6 @@ jQuery(($) => {
 
         if (csrf) {
             internals.crumb = csrf;
-            document.cookie = `crumb=${csrf}; path=/`;
         }
     });
 
