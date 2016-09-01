@@ -3,9 +3,9 @@
 const Boom = require('boom');
 
 
-module.exports = () => {
+module.exports = function () {
 
-    return (request, reply) => {
+    return function (request, reply) {
 
         const todo = request.server.methods.todoModel;
 

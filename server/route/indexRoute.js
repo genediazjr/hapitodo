@@ -5,7 +5,7 @@ module.exports = [
     {
         path: '/',
         method: 'get',
-        handler: (request, reply) => {
+        handler: function (request, reply) {
 
             return reply.file('index.html');
         }

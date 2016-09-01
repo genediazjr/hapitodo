@@ -3,9 +3,9 @@
 const Boom = require('boom');
 
 
-module.exports = () => {
+module.exports = function () {
 
-    return (request, reply) => {
+    return function (request, reply) {
 
         const todo = request.server.methods.todoModel;
 
@@ -22,7 +22,7 @@ module.exports = () => {
                 return reply(Boom.notFound('To Do does not exist.'));
             }
 
-            return reply({success: 'To Do Updated.'}).code(200);
+            return reply({ success: 'To Do Updated.' }).code(200);
         });
     };
 };
