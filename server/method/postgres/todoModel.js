@@ -125,7 +125,7 @@ exports.del = function (id, next) {
                 return next(queryErr, false);
             }
 
-            return next(err, result.rowCount);
+            return next(null, result.rowCount);
         });
     });
 };
@@ -219,7 +219,7 @@ exports.set = function (todo, next) {
                 return next(queryErr, false);
             }
 
-            return next(err, result.rowCount);
+            return next(null, result.rowCount);
         });
     });
 };
