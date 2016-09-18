@@ -39,6 +39,7 @@
     "proxyquire": "1.7.x"
   },
   "devDependencies": {
+    "handlebars": "4.0.x",
     "coveralls": "2.11.x",
     "nodemon": "1.10.x",
     "code": "3.0.x",
